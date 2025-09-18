@@ -1,0 +1,1539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <!-- Version: Orange Theme 2.0 - Build: 2025-10-01-FINAL-v3.141592 -->
+    <meta name="version" content="orange-theme-v3.141592">
+    <meta name="build-id" content="github-deploy-20251001">
+    <title>Privacy Quality Inspection System - Orange Theme</title>
+    <script src="https://unpkg.com/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2rem;
+            border-radius: 20px;
+            text-align: center;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+            font-size: 2.5rem;
+        }
+
+        .header p {
+            color: #718096;
+            font-size: 1.1rem;
+        }
+
+        .connection-status {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 1rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            text-align: center;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .status-connected {
+            border-left: 5px solid #48bb78;
+        }
+
+        .status-disconnected {
+            border-left: 5px solid #f56565;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .card h3 {
+            color: #2d3748;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #4a5568;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #ff6b35;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 107, 53, 0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #ff8c42 0%, #ffa659 100%);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ff5722 0%, #e64a19 100%);
+        }
+
+        .inspection-list {
+            grid-column: 1 / -1;
+            margin-top: 2rem;
+        }
+
+        .inspection-item {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr auto;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .inspection-verified {
+            border-left: 5px solid #48bb78;
+        }
+
+        .inspection-pending {
+            border-left: 5px solid #ed8936;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+        }
+
+        .alert-success {
+            background-color: #c6f6d5;
+            border: 1px solid #9ae6b4;
+            color: #22543d;
+        }
+
+        .alert-error {
+            background-color: #fed7d7;
+            border: 1px solid #feb2b2;
+            color: #742a2a;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .metric-card {
+            background: rgba(255, 107, 53, 0.1);
+            padding: 1rem;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #ff6b35;
+        }
+
+        .metric-label {
+            color: #4a5568;
+            margin-top: 0.5rem;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .inspection-item {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+
+        .privacy-notice {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            border-left: 5px solid #ff8c42;
+        }
+
+        .icon {
+            font-size: 1.2em;
+        }
+
+        .contract-info {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            font-family: monospace;
+            font-size: 0.9rem;
+            word-break: break-all;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔒 Privacy Quality Inspection System</h1>
+            <p>Secure, Anonymous Quality Control using FHE Technology</p>
+            <p style="color: #ff6b35; font-weight: bold; margin-top: 0.5rem;">🎨 Orange Theme v2.0</p>
+        </div>
+
+        <div class="contract-info">
+            <strong>Contract Address:</strong> 0xB867082d753197aeAf0E3523FE993Eae79F45342<br>
+            <strong>Network:</strong> Sepolia Testnet
+        </div>
+
+        <div class="privacy-notice">
+            <strong>🛡️ Privacy Protected:</strong> All quality scores, defect counts, and batch numbers are encrypted on-chain using Fully Homomorphic Encryption. Only authorized personnel can access sensitive data while maintaining complete anonymity and data integrity.
+        </div>
+
+        <div class="connection-status" id="connectionStatus">
+            <span id="connectionText">Connect your wallet to start</span>
+        </div>
+
+        <div class="main-grid">
+            <div class="card">
+                <h3><span class="icon">📊</span> Record Quality Inspection</h3>
+                <form id="inspectionForm">
+                    <div class="form-group">
+                        <label for="qualityScore">Quality Score (0-100):</label>
+                        <input type="number" id="qualityScore" min="0" max="100" required>
+                        <small>Enter the overall quality score for the product</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="defectCount">Defect Count:</label>
+                        <input type="number" id="defectCount" min="0" max="255" required>
+                        <small>Number of defects found during inspection</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="productBatch">Product Batch Number:</label>
+                        <input type="number" id="productBatch" required>
+                        <small>Unique batch identifier for the product</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="productCategory">Product Category:</label>
+                        <select id="productCategory" required>
+                            <option value="">Select Category</option>
+                            <option value="Electronics">Electronics</option>
+                            <option value="Automotive">Automotive</option>
+                            <option value="Pharmaceutical">Pharmaceutical</option>
+                            <option value="Food">Food & Beverage</option>
+                            <option value="Textile">Textile</option>
+                            <option value="Medical">Medical Devices</option>
+                            <option value="Industrial">Industrial</option>
+                            <option value="Aerospace">Aerospace</option>
+                            <option value="Chemical">Chemical</option>
+                            <option value="Consumer">Consumer Goods</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn" id="recordBtn">
+                        <span id="recordBtnText">Record Inspection</span>
+                    </button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h3><span class="icon">✅</span> Inspector Management</h3>
+                <div class="alert" id="authorizationAlert" style="background-color: #fed7d7; border: 1px solid #feb2b2; color: #742a2a; margin-bottom: 1rem;">
+                    <strong>🚨 Authorization Required:</strong> You need to be authorized by the contract owner to use this system.
+                    <br><strong>Your address:</strong> <code id="currentUserAddress">Connect wallet to see address</code>
+                    <br><strong>Contract owner:</strong> <code id="contractOwnerAddress">Loading...</code>
+                    <br><em>Contact the owner to get authorized as an inspector.</em>
+                </div>
+                <div class="form-group">
+                    <label for="newInspector">Authorize Inspector Address:</label>
+                    <input type="text" id="newInspector" placeholder="0x..." pattern="0x[a-fA-F0-9]{40}">
+                    <small>Enter the Ethereum address of the new inspector (Owner only)</small>
+                </div>
+                <button class="btn btn-secondary" onclick="authorizeInspector()">
+                    Authorize Inspector
+                </button>
+
+                <hr style="margin: 2rem 0; border: 1px solid #e2e8f0;">
+
+                <div class="form-group">
+                    <label for="inspectionId">Verify Inspection ID:</label>
+                    <input type="number" id="inspectionId" min="0">
+                    <small>Enter the inspection ID to verify</small>
+                </div>
+                <button class="btn btn-secondary" onclick="verifyInspection()">
+                    Verify Inspection
+                </button>
+            </div>
+        </div>
+
+        <div class="card inspection-list">
+            <h3><span class="icon">📋</span> Recent Inspection Records</h3>
+            <div id="inspectionsList">
+                <p style="text-align: center; color: #718096;">Loading inspections...</p>
+            </div>
+            <button class="btn" onclick="loadInspections()" style="margin-top: 1rem;">
+                Refresh Inspections
+            </button>
+        </div>
+
+        <div class="card inspection-list">
+            <h3><span class="icon">📈</span> Quality Metrics</h3>
+            <div class="form-group">
+                <label for="categorySelect">Select Category for Metrics:</label>
+                <select id="categorySelect">
+                    <option value="">Select Category</option>
+                    <option value="Electronics">Electronics</option>
+                    <option value="Automotive">Automotive</option>
+                    <option value="Pharmaceutical">Pharmaceutical</option>
+                    <option value="Food">Food & Beverage</option>
+                    <option value="Textile">Textile</option>
+                    <option value="Medical">Medical Devices</option>
+                    <option value="Industrial">Industrial</option>
+                    <option value="Aerospace">Aerospace</option>
+                    <option value="Chemical">Chemical</option>
+                    <option value="Consumer">Consumer Goods</option>
+                </select>
+            </div>
+            <button class="btn" onclick="calculateMetrics()">
+                Calculate Category Metrics
+            </button>
+            <div id="metricsDisplay" class="metrics-grid"></div>
+        </div>
+
+        <div class="card inspection-list">
+            <h3><span class="icon">ℹ️</span> System Information</h3>
+            <div style="font-family: monospace; font-size: 0.9rem;">
+                <p><strong>Contract:</strong> 0xB867082d753197aeAf0E3523FE993Eae79F45342</p>
+                <p><strong>Network:</strong> Sepolia Testnet (Chain ID: 11155111)</p>
+                <p><strong>Privacy:</strong> Fully Homomorphic Encryption (FHE)</p>
+                <p><strong>Status:</strong> <span id="contractStatus">Connecting...</span></p>
+            </div>
+            <button class="btn btn-secondary" onclick="refreshContractInfo()" style="margin-top: 1rem;">
+                🔄 Refresh Contract Info
+            </button>
+        </div>
+
+        <div class="card inspection-list" style="background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%); color: white; text-align: center; padding: 1rem; margin-top: 2rem;">
+            <h3 style="color: white;">✅ Orange Theme v3.141592 Active - GitHub Deploy 2025-10-01</h3>
+            <p style="font-size: 1.2rem; margin-top: 0.5rem;">🔥 If you see this ORANGE banner, the new theme is loaded correctly! 🔥</p>
+            <p style="margin-top: 0.5rem;">Build ID: github-deploy-20251001 | Commit: Latest</p>
+        </div>
+    </div>
+
+    <script>
+        // Privacy Quality Inspection System
+        let provider;
+        let signer;
+        let contract;
+        let userAddress;
+
+        // Contract Configuration
+        const CONTRACT_ADDRESS = "0xB867082d753197aeAf0E3523FE993Eae79F45342";
+        const CONTRACT_ABI = [
+            {
+                "inputs": [],
+                "stateMutability": "nonpayable",
+                "type": "constructor"
+            },
+            {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": true,
+                        "internalType": "address",
+                        "name": "inspector",
+                        "type": "address"
+                    },
+                    {
+                        "indexed": true,
+                        "internalType": "address",
+                        "name": "authorizer",
+                        "type": "address"
+                    }
+                ],
+                "name": "InspectorAuthorized",
+                "type": "event"
+            },
+            {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": true,
+                        "internalType": "uint256",
+                        "name": "inspectionId",
+                        "type": "uint256"
+                    },
+                    {
+                        "indexed": true,
+                        "internalType": "address",
+                        "name": "inspector",
+                        "type": "address"
+                    },
+                    {
+                        "indexed": false,
+                        "internalType": "string",
+                        "name": "category",
+                        "type": "string"
+                    },
+                    {
+                        "indexed": false,
+                        "internalType": "uint256",
+                        "name": "timestamp",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "InspectionRecorded",
+                "type": "event"
+            },
+            {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": true,
+                        "internalType": "uint256",
+                        "name": "inspectionId",
+                        "type": "uint256"
+                    },
+                    {
+                        "indexed": true,
+                        "internalType": "address",
+                        "name": "verifier",
+                        "type": "address"
+                    }
+                ],
+                "name": "InspectionVerified",
+                "type": "event"
+            },
+            {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": true,
+                        "internalType": "string",
+                        "name": "category",
+                        "type": "string"
+                    },
+                    {
+                        "indexed": false,
+                        "internalType": "uint256",
+                        "name": "totalCount",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "MetricsUpdated",
+                "type": "event"
+            },
+            {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": true,
+                        "internalType": "string",
+                        "name": "category",
+                        "type": "string"
+                    },
+                    {
+                        "indexed": false,
+                        "internalType": "uint256",
+                        "name": "inspectionId",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "QualityAlert",
+                "type": "event"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "_inspector",
+                        "type": "address"
+                    }
+                ],
+                "name": "authorizeInspector",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "",
+                        "type": "address"
+                    }
+                ],
+                "name": "authorizedInspectors",
+                "outputs": [
+                    {
+                        "internalType": "bool",
+                        "name": "",
+                        "type": "bool"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "string",
+                        "name": "_category",
+                        "type": "string"
+                    }
+                ],
+                "name": "calculateCategoryMetrics",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "string",
+                        "name": "",
+                        "type": "string"
+                    }
+                ],
+                "name": "categoryMetrics",
+                "outputs": [
+                    {
+                        "internalType": "bool",
+                        "name": "metricsCalculated",
+                        "type": "bool"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "contractPaused",
+                "outputs": [
+                    {
+                        "internalType": "bool",
+                        "name": "",
+                        "type": "bool"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "getContractStats",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "totalInspections",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "totalInspectors",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "contractOwner",
+                        "type": "address"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "_inspectionId",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "getInspectionInfo",
+                "outputs": [
+                    {
+                        "internalType": "address",
+                        "name": "inspector",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "timestamp",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "bool",
+                        "name": "isVerified",
+                        "type": "bool"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "productCategory",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "bytes32",
+                        "name": "inspectionHash",
+                        "type": "bytes32"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "_inspector",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "_offset",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "_limit",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "getInspectorInspections",
+                "outputs": [
+                    {
+                        "internalType": "uint256[]",
+                        "name": "",
+                        "type": "uint256[]"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "_inspector",
+                        "type": "address"
+                    }
+                ],
+                "name": "getInspectorHistoryCount",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "string",
+                        "name": "_category",
+                        "type": "string"
+                    }
+                ],
+                "name": "hasCategoryMetrics",
+                "outputs": [
+                    {
+                        "internalType": "bool",
+                        "name": "",
+                        "type": "bool"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "inspectionCount",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "inspections",
+                "outputs": [
+                    {
+                        "internalType": "address",
+                        "name": "inspector",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "timestamp",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "bool",
+                        "name": "isVerified",
+                        "type": "bool"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "productCategory",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "bytes32",
+                        "name": "inspectionHash",
+                        "type": "bytes32"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "owner",
+                "outputs": [
+                    {
+                        "internalType": "address",
+                        "name": "",
+                        "type": "address"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "pauseContract",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint8",
+                        "name": "_qualityScore",
+                        "type": "uint8"
+                    },
+                    {
+                        "internalType": "uint8",
+                        "name": "_defectCount",
+                        "type": "uint8"
+                    },
+                    {
+                        "internalType": "uint32",
+                        "name": "_productBatch",
+                        "type": "uint32"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "_productCategory",
+                        "type": "string"
+                    }
+                ],
+                "name": "recordInspection",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "_inspector",
+                        "type": "address"
+                    }
+                ],
+                "name": "revokeInspector",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "unpauseContract",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "_inspectionId",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "verifyInspection",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            }
+        ];
+
+        // Initialize application
+        async function init() {
+            if (typeof window.ethereum !== 'undefined') {
+                provider = new ethers.providers.Web3Provider(window.ethereum);
+
+                try {
+                    await window.ethereum.request({ method: 'eth_requestAccounts' });
+                    signer = provider.getSigner();
+                    userAddress = await signer.getAddress();
+
+                    // Validate contract first
+                    const isValid = await validateContract();
+                    if (!isValid) {
+                        document.getElementById('contractStatus').textContent = 'Invalid Contract';
+                        return;
+                    }
+
+                    // Initialize contract
+                    contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
+
+                    updateConnectionStatus(true);
+                    await loadInspections();
+                    await checkAndDisplayAuthorizationStatus();
+                    await checkContractInfo();
+
+                    document.getElementById('contractStatus').textContent = 'Connected';
+                    console.log('Connected to Privacy Quality Inspection Contract');
+
+                } catch (error) {
+                    console.error('Failed to connect wallet:', error);
+                    updateConnectionStatus(false);
+                    document.getElementById('contractStatus').textContent = 'Connection Failed';
+                }
+            } else {
+                updateConnectionStatus(false);
+                showAlert('Please install MetaMask to use this application', 'error');
+                document.getElementById('contractStatus').textContent = 'MetaMask Required';
+            }
+        }
+
+        // Update connection status
+        function updateConnectionStatus(connected) {
+            const statusElement = document.getElementById('connectionStatus');
+            const textElement = document.getElementById('connectionText');
+
+            if (connected && userAddress) {
+                statusElement.className = 'connection-status status-connected';
+                textElement.textContent = `Connected: ${userAddress.slice(0, 6)}...${userAddress.slice(-4)}`;
+            } else {
+                statusElement.className = 'connection-status status-disconnected';
+                textElement.textContent = 'Not connected - Please connect your wallet';
+            }
+        }
+
+        // Show alert messages
+        function showAlert(message, type = 'success') {
+            const existingAlerts = document.querySelectorAll('.alert');
+            existingAlerts.forEach(alert => alert.remove());
+
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.textContent = message;
+
+            const container = document.querySelector('.container');
+            container.insertBefore(alert, container.children[3]);
+
+            setTimeout(() => {
+                if (alert.parentNode) {
+                    alert.remove();
+                }
+            }, 5000);
+        }
+
+        // Check if user is authorized inspector
+        async function checkInspectorAuthorization() {
+            if (!contract || !userAddress) return false;
+
+            try {
+                const isAuthorized = await contract.authorizedInspectors(userAddress);
+                return isAuthorized;
+            } catch (error) {
+                console.error('Error checking authorization:', error);
+                return false;
+            }
+        }
+
+        // Check contract info (force refresh, no cache)
+        async function checkContractInfo() {
+            if (!contract || !userAddress) return;
+
+            try {
+                console.log('🔄 Refreshing contract info from blockchain...');
+
+                // Force fresh call to get latest owner (no cache)
+                const owner = await contract.owner({ blockTag: 'latest' });
+                const isOwner = owner.toLowerCase() === userAddress.toLowerCase();
+
+                // Get contract status
+                const isPaused = await contract.contractPaused({ blockTag: 'latest' });
+
+                console.log('📋 Latest Contract Info:', {
+                    contractAddress: CONTRACT_ADDRESS,
+                    owner: owner,
+                    currentUser: userAddress,
+                    isOwner: isOwner,
+                    isPaused: isPaused
+                });
+
+                // Update contract info
+                const contractInfoElement = document.querySelector('.contract-info');
+                if (contractInfoElement) {
+                    // Reset to original content
+                    contractInfoElement.innerHTML = `
+                        <strong>Contract Address:</strong> ${CONTRACT_ADDRESS}<br>
+                        <strong>Network:</strong> Sepolia Testnet
+                    `;
+
+                    // Add fresh owner info
+                    if (isOwner) {
+                        contractInfoElement.innerHTML += `<br><strong style="color: #48bb78;">✅ You are the contract owner</strong>`;
+                        showAlert('✅ Confirmed: You are the contract owner and can authorize inspectors!', 'success');
+                    } else {
+                        contractInfoElement.innerHTML += `<br><strong>Owner:</strong> ${owner}`;
+                        contractInfoElement.innerHTML += `<br><strong style="color: #ed8936;">⚠️ You are NOT the owner</strong>`;
+                    }
+                }
+
+                // Update authorization alert
+                const ownerAddressElement = document.getElementById('contractOwnerAddress');
+                const authAlert = document.getElementById('authorizationAlert');
+
+                if (ownerAddressElement) {
+                    ownerAddressElement.textContent = owner;
+                }
+
+                if (authAlert && isOwner) {
+                    authAlert.style.backgroundColor = '#c6f6d5';
+                    authAlert.style.borderColor = '#9ae6b4';
+                    authAlert.style.color = '#22543d';
+                    authAlert.innerHTML = `
+                        <strong>✅ You are the contract owner!</strong>
+                        <br>You can authorize inspectors and manage the system.
+                    `;
+                }
+
+                if (isPaused) {
+                    showAlert('⚠️ Contract is currently paused. Some functions may not work.', 'error');
+                }
+
+                return { owner, isOwner, isPaused };
+
+            } catch (error) {
+                console.error('❌ Error checking contract info:', error);
+                showAlert('⚠️ Unable to verify contract information. Please check your network connection.', 'error');
+                return null;
+            }
+        }
+
+        // Check and display authorization status
+        async function checkAndDisplayAuthorizationStatus() {
+            if (!contract || !userAddress) return;
+
+            try {
+                const isAuthorized = await checkInspectorAuthorization();
+                const statusElement = document.getElementById('connectionText');
+                const userAddressElement = document.getElementById('currentUserAddress');
+
+                if (userAddressElement) {
+                    userAddressElement.textContent = userAddress;
+                }
+
+                if (isAuthorized) {
+                    statusElement.innerHTML = `Connected: ${userAddress.slice(0, 6)}...${userAddress.slice(-4)} ✅ <span style="color: #48bb78;">Authorized Inspector</span>`;
+                } else {
+                    statusElement.innerHTML = `Connected: ${userAddress.slice(0, 6)}...${userAddress.slice(-4)} ⚠️ <span style="color: #ed8936;">Not Authorized</span>`;
+                    showAlert('⚠️ You are not authorized as an inspector. Please get authorized by the contract owner to record inspections.', 'error');
+                }
+            } catch (error) {
+                console.error('Error checking authorization status:', error);
+            }
+        }
+
+        // Record quality inspection
+        async function recordInspection(event) {
+            event.preventDefault();
+
+            if (!contract) {
+                showAlert('Please connect your wallet first', 'error');
+                return;
+            }
+
+            const recordBtn = document.getElementById('recordBtn');
+            const recordBtnText = document.getElementById('recordBtnText');
+
+            try {
+                recordBtn.disabled = true;
+                recordBtnText.innerHTML = '<span class="loading"></span> Checking Authorization...';
+
+                // Check if user is authorized inspector
+                const isAuthorized = await checkInspectorAuthorization();
+                if (!isAuthorized) {
+                    throw new Error('You are not authorized as an inspector. Please get authorized by the contract owner first.');
+                }
+
+                recordBtnText.innerHTML = '<span class="loading"></span> Recording Inspection...';
+
+                const qualityScore = parseInt(document.getElementById('qualityScore').value);
+                const defectCount = parseInt(document.getElementById('defectCount').value);
+                const productBatch = parseInt(document.getElementById('productBatch').value);
+                const productCategory = document.getElementById('productCategory').value;
+
+                if (qualityScore < 0 || qualityScore > 100) {
+                    throw new Error('Quality score must be between 0 and 100');
+                }
+
+                if (defectCount < 0 || defectCount > 255) {
+                    throw new Error('Defect count must be between 0 and 255');
+                }
+
+                console.log('Recording inspection:', {
+                    qualityScore,
+                    defectCount,
+                    productBatch,
+                    productCategory
+                });
+
+                const tx = await contract.recordInspection(
+                    qualityScore,
+                    defectCount,
+                    productBatch,
+                    productCategory,
+                    { gasLimit: 500000 }
+                );
+
+                showAlert('Transaction submitted! Waiting for confirmation...', 'success');
+                await tx.wait();
+
+                showAlert('Inspection recorded successfully! Data is encrypted on-chain. 🎉', 'success');
+                document.getElementById('inspectionForm').reset();
+                await loadInspections();
+
+            } catch (error) {
+                console.error('Error recording inspection:', error);
+                if (error.message.includes('not authorized')) {
+                    showAlert(`❌ ${error.message}`, 'error');
+                } else if (error.code === 'CALL_EXCEPTION') {
+                    showAlert('❌ Transaction failed. You may not be authorized as an inspector or the contract is paused.', 'error');
+                } else {
+                    showAlert(`Error: ${error.message}`, 'error');
+                }
+            } finally {
+                recordBtn.disabled = false;
+                recordBtnText.textContent = 'Record Inspection';
+            }
+        }
+
+        // Authorize inspector
+        async function authorizeInspector() {
+            if (!contract) {
+                showAlert('Please connect your wallet first', 'error');
+                return;
+            }
+
+            const inspectorAddress = document.getElementById('newInspector').value;
+
+            if (!inspectorAddress || !ethers.utils.isAddress(inspectorAddress)) {
+                showAlert('Please enter a valid Ethereum address', 'error');
+                return;
+            }
+
+            try {
+                // Force fresh check of owner (no cache)
+                const owner = await contract.owner({ blockTag: 'latest' });
+                const isOwner = owner.toLowerCase() === userAddress.toLowerCase();
+
+                console.log('🔍 Owner verification:', {
+                    contractOwner: owner,
+                    currentUser: userAddress,
+                    isOwner: isOwner
+                });
+
+                if (!isOwner) {
+                    showAlert(`❌ Only the contract owner (${owner}) can authorize inspectors. Current owner is NOT you.`, 'error');
+                    return;
+                }
+
+                // Check if contract is paused
+                const isPaused = await contract.contractPaused();
+                if (isPaused) {
+                    showAlert('❌ Contract is paused. Cannot authorize inspectors.', 'error');
+                    return;
+                }
+
+                const tx = await contract.authorizeInspector(inspectorAddress, { gasLimit: 200000 });
+                showAlert('Transaction submitted! Authorizing inspector...', 'success');
+                await tx.wait();
+
+                showAlert(`✅ Inspector ${inspectorAddress} authorized successfully!`, 'success');
+                document.getElementById('newInspector').value = '';
+
+                // Refresh authorization status if the user authorized themselves
+                if (inspectorAddress.toLowerCase() === userAddress.toLowerCase()) {
+                    await checkAndDisplayAuthorizationStatus();
+                }
+
+            } catch (error) {
+                console.error('Error authorizing inspector:', error);
+                if (error.code === 'CALL_EXCEPTION') {
+                    showAlert('❌ Transaction failed. You may not be the contract owner or the contract might be paused.', 'error');
+                } else {
+                    showAlert(`Error: ${error.message}`, 'error');
+                }
+            }
+        }
+
+        // Verify inspection
+        async function verifyInspection() {
+            if (!contract) {
+                showAlert('Please connect your wallet first', 'error');
+                return;
+            }
+
+            const inspectionId = parseInt(document.getElementById('inspectionId').value);
+
+            if (isNaN(inspectionId) || inspectionId < 0) {
+                showAlert('Please enter a valid inspection ID', 'error');
+                return;
+            }
+
+            try {
+                const tx = await contract.verifyInspection(inspectionId, { gasLimit: 200000 });
+                showAlert('Transaction submitted! Verifying inspection...', 'success');
+                await tx.wait();
+
+                showAlert(`Inspection #${inspectionId} verified successfully!`, 'success');
+                document.getElementById('inspectionId').value = '';
+                await loadInspections();
+
+            } catch (error) {
+                console.error('Error verifying inspection:', error);
+                showAlert(`Error: ${error.message}`, 'error');
+            }
+        }
+
+        // Load inspections
+        async function loadInspections() {
+            if (!contract) {
+                document.getElementById('inspectionsList').innerHTML = '<p style="text-align: center; color: #718096;">Connect wallet to view inspections</p>';
+                return;
+            }
+
+            try {
+                const inspectionCount = await contract.inspectionCount();
+                const inspectionsList = document.getElementById('inspectionsList');
+
+                if (inspectionCount.toNumber() === 0) {
+                    inspectionsList.innerHTML = '<p style="text-align: center; color: #718096;">No inspections recorded yet</p>';
+                    return;
+                }
+
+                let inspectionsHTML = '';
+                const startIndex = Math.max(0, inspectionCount.toNumber() - 10);
+
+                for (let i = inspectionCount.toNumber() - 1; i >= startIndex; i--) {
+                    try {
+                        const inspection = await contract.getInspectionInfo(i);
+                        const date = new Date(inspection.timestamp * 1000).toLocaleString();
+                        const verifiedClass = inspection.isVerified ? 'inspection-verified' : 'inspection-pending';
+                        const verifiedText = inspection.isVerified ? '✅ Verified' : '⏳ Pending';
+
+                        inspectionsHTML += `
+                            <div class="inspection-item ${verifiedClass}">
+                                <div>
+                                    <strong>ID #${i}</strong><br>
+                                    <small>Category: ${inspection.productCategory}</small>
+                                </div>
+                                <div>
+                                    Inspector:<br>
+                                    <small>${inspection.inspector.slice(0, 6)}...${inspection.inspector.slice(-4)}</small>
+                                </div>
+                                <div>
+                                    ${date}
+                                </div>
+                                <div>
+                                    ${verifiedText}
+                                </div>
+                                <div>
+                                    <button class="btn" style="padding: 0.5rem; font-size: 0.8rem;" onclick="viewInspectionDetails(${i})">
+                                        View Details
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                    } catch (error) {
+                        console.error(`Error loading inspection ${i}:`, error);
+                    }
+                }
+
+                inspectionsList.innerHTML = inspectionsHTML || '<p style="text-align: center; color: #718096;">No inspections found</p>';
+
+            } catch (error) {
+                console.error('Error loading inspections:', error);
+                showAlert(`Error loading inspections: ${error.message}`, 'error');
+            }
+        }
+
+        // View inspection details
+        async function viewInspectionDetails(inspectionId) {
+            if (!contract) return;
+
+            try {
+                const inspection = await contract.getInspectionInfo(inspectionId);
+                const details = `Inspection Details - ID #${inspectionId}
+
+Inspector: ${inspection.inspector}
+Product Category: ${inspection.productCategory}
+Recorded: ${new Date(inspection.timestamp * 1000).toLocaleString()}
+Verified: ${inspection.isVerified ? 'Yes' : 'No'}
+Data Hash: ${inspection.inspectionHash}
+
+Privacy Notice:
+Quality scores, defect counts, and batch numbers are encrypted using Fully Homomorphic Encryption (FHE) and are only accessible to authorized personnel while maintaining complete data privacy.`;
+
+                alert(details);
+
+            } catch (error) {
+                console.error('Error viewing inspection details:', error);
+                showAlert(`Error: ${error.message}`, 'error');
+            }
+        }
+
+        // Calculate metrics
+        async function calculateMetrics() {
+            if (!contract) {
+                showAlert('Please connect your wallet first', 'error');
+                return;
+            }
+
+            const category = document.getElementById('categorySelect').value;
+
+            if (!category) {
+                showAlert('Please select a category', 'error');
+                return;
+            }
+
+            try {
+                const tx = await contract.calculateCategoryMetrics(category, { gasLimit: 800000 });
+                showAlert('Calculating encrypted metrics... Please wait for confirmation.', 'success');
+                await tx.wait();
+
+                showAlert(`Privacy-preserving metrics calculated for ${category}!`, 'success');
+
+                const metricsDisplay = document.getElementById('metricsDisplay');
+                metricsDisplay.innerHTML = `
+                    <div class="metric-card">
+                        <div class="metric-value">🔒</div>
+                        <div class="metric-label">Total Inspections<br><small>(FHE Encrypted)</small></div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">🔒</div>
+                        <div class="metric-label">Passed Quality<br><small>(FHE Encrypted)</small></div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">🔒</div>
+                        <div class="metric-label">Average Score<br><small>(FHE Encrypted)</small></div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">✅</div>
+                        <div class="metric-label">Privacy Protected<br><small>Fully Encrypted</small></div>
+                    </div>
+                `;
+
+            } catch (error) {
+                console.error('Error calculating metrics:', error);
+                showAlert(`Error: ${error.message}`, 'error');
+            }
+        }
+
+        // Event listeners
+        function setupEventListeners() {
+            if (!contract) return;
+
+            contract.on('InspectionRecorded', (inspectionId, inspector, category, timestamp) => {
+                console.log('New inspection recorded:', { inspectionId: inspectionId.toString(), inspector, category });
+                showAlert(`New encrypted inspection recorded: ID #${inspectionId}`, 'success');
+                loadInspections();
+            });
+
+            contract.on('InspectionVerified', (inspectionId, verifier) => {
+                console.log('Inspection verified:', { inspectionId: inspectionId.toString(), verifier });
+                showAlert(`Inspection #${inspectionId} verified by ${verifier.slice(0, 6)}...${verifier.slice(-4)}!`, 'success');
+                loadInspections();
+            });
+
+            contract.on('QualityAlert', (category, inspectionId) => {
+                console.log('Quality alert:', { category, inspectionId: inspectionId.toString() });
+                showAlert(`⚠️ Quality Alert: Low quality detected in ${category} (ID: #${inspectionId})`, 'error');
+            });
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', async () => {
+            await init();
+            setupEventListeners();
+
+            document.getElementById('inspectionForm').addEventListener('submit', recordInspection);
+
+            // Network validation
+            if (window.ethereum) {
+                const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+                if (chainId !== '0xaa36a7') { // Sepolia testnet
+                    showAlert('Please switch to Sepolia testnet (Chain ID: 11155111)', 'error');
+                }
+            }
+        });
+
+        // Handle account/network changes
+        if (window.ethereum) {
+            window.ethereum.on('accountsChanged', async (accounts) => {
+                if (accounts.length > 0) {
+                    await init();
+                } else {
+                    updateConnectionStatus(false);
+                }
+            });
+
+            window.ethereum.on('chainChanged', () => {
+                window.location.reload();
+            });
+        }
+
+        // Utility functions
+        function formatAddress(address) {
+            return `${address.slice(0, 6)}...${address.slice(-4)}`;
+        }
+
+        // Refresh contract info manually
+        async function refreshContractInfo() {
+            if (!contract) {
+                showAlert('Please connect your wallet first', 'error');
+                return;
+            }
+
+            showAlert('🔄 Refreshing contract information...', 'success');
+            await checkContractInfo();
+            await checkAndDisplayAuthorizationStatus();
+            showAlert('✅ Contract information refreshed!', 'success');
+        }
+
+        // Test contract functions with detailed diagnostics
+        async function testContract() {
+            if (!contract) {
+                console.log('❌ Contract not initialized');
+                return;
+            }
+
+            try {
+                console.log('🔍 === Detailed Contract Diagnostics ===');
+                console.log('📍 Contract Address:', CONTRACT_ADDRESS);
+                console.log('👤 User Address:', userAddress);
+                console.log('🌐 Network:', await provider.getNetwork());
+
+                // Test if contract exists
+                const code = await provider.getCode(CONTRACT_ADDRESS);
+                console.log('📜 Contract Code Length:', code.length);
+
+                if (code === '0x') {
+                    console.error('❌ Contract not deployed at this address!');
+                    showAlert('❌ Contract not found at this address. Please verify the contract address.', 'error');
+                    return;
+                }
+
+                // Test basic contract calls
+                console.log('\n🔬 Testing Contract Functions:');
+
+                try {
+                    const owner = await contract.owner();
+                    console.log('✅ Owner:', owner);
+                    console.log('👑 Is User Owner:', owner.toLowerCase() === userAddress.toLowerCase());
+                } catch (error) {
+                    console.error('❌ Failed to get owner:', error.message);
+                }
+
+                try {
+                    const isPaused = await contract.contractPaused();
+                    console.log('⏸️ Contract Paused:', isPaused);
+                } catch (error) {
+                    console.error('❌ Failed to check pause status:', error.message);
+                }
+
+                try {
+                    const isAuthorized = await contract.authorizedInspectors(userAddress);
+                    console.log('✅ User Authorized:', isAuthorized);
+                } catch (error) {
+                    console.error('❌ Failed to check authorization:', error.message);
+                }
+
+                try {
+                    const inspectionCount = await contract.inspectionCount();
+                    console.log('📊 Total Inspections:', inspectionCount.toString());
+                } catch (error) {
+                    console.error('❌ Failed to get inspection count:', error.message);
+                }
+
+                console.log('🏁 === Diagnostics Complete ===');
+
+            } catch (error) {
+                console.error('💥 Contract test failed:', error);
+                showAlert(`Contract test failed: ${error.message}`, 'error');
+            }
+        }
+
+        // Check if contract is valid
+        async function validateContract() {
+            if (!provider) {
+                showAlert('❌ Please connect your wallet first', 'error');
+                return false;
+            }
+
+            try {
+                const code = await provider.getCode(CONTRACT_ADDRESS);
+                if (code === '0x') {
+                    showAlert('❌ No contract found at this address. Please verify the contract address.', 'error');
+                    return false;
+                }
+
+                // Try to call a basic function
+                const testContract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, provider);
+                await testContract.owner();
+
+                return true;
+            } catch (error) {
+                console.error('Contract validation failed:', error);
+                showAlert(`❌ Contract validation failed: ${error.message}`, 'error');
+                return false;
+            }
+        }
+
+        // Global debug access
+        window.privacyQualityApp = {
+            CONTRACT_ADDRESS,
+            contract,
+            provider,
+            signer,
+            userAddress,
+            loadInspections,
+            recordInspection,
+            authorizeInspector,
+            verifyInspection,
+            calculateMetrics,
+            testContract,
+            validateContract,
+            refreshContractInfo
+        };
+    </script>
+</body>
+</html>
