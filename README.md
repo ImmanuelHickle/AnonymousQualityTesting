@@ -1,101 +1,131 @@
-# Anonymous Quality Testing Platform
+# Anonymous Quality Testing System
 
-A privacy-preserving quality assurance platform built on blockchain technology, utilizing Fully Homomorphic Encryption (FHE) to ensure complete anonymity and data privacy in quality testing processes.
+A privacy-preserving quality inspection platform built on Fully Homomorphic Encryption (FHE) technology, enabling anonymous quality control processes while maintaining complete data confidentiality and integrity.
 
-## 🔐 Core Concepts
+## 🔒 Core Concepts
 
-### Fully Homomorphic Encryption (FHE) Smart Contracts
-Our platform leverages advanced cryptographic techniques through FHE-enabled smart contracts, allowing computations to be performed on encrypted data without revealing the underlying information. This ensures that all quality testing data remains private and secure throughout the entire process.
+### Privacy-Preserving Quality Inspection
+Our system revolutionizes traditional quality control by implementing **anonymous quality detection** that protects sensitive manufacturing and inspection data while maintaining transparency and accountability.
 
-### Anonymous Quality Testing
-The platform enables organizations and individuals to conduct quality assessments while maintaining complete anonymity. Testers can submit reviews, vote on quality metrics, and participate in consensus mechanisms without exposing their identity or sensitive testing data.
+### Fully Homomorphic Encryption (FHE) Smart Contract
+The platform utilizes cutting-edge FHE technology to ensure that all quality scores, defect counts, and batch numbers remain encrypted on-chain, making them accessible only to authorized personnel while preserving complete anonymity.
 
-### Privacy-Preserving Quality Data
-All quality testing data, including votes, reviews, and assessment results, are encrypted using FHE technology. This means that even when data is processed and analyzed, the original information remains completely private and inaccessible to unauthorized parties.
+### Confidential Inspection Data
+- **Quality Scores**: Encrypted assessment ratings (0-100)
+- **Defect Counts**: Anonymous defect tracking
+- **Batch Numbers**: Confidential product identification
+- **Inspector Identity**: Privacy-protected authorization system
 
-## 🚀 Live Platform
+## 🌐 Live Demo
 
-**Website:** [https://anonymous-quality-testing-fwia.vercel.app/](https://anonymous-quality-testing-fwia.vercel.app/)
+**Website**: [https://anonymous-quality-testing-fwia.vercel.app/](https://anonymous-quality-testing-fwia.vercel.app/)
 
-**GitHub Repository:** [https://github.com/ImmanuelHickle/AnonymousQualityTesting](https://github.com/ImmanuelHickle/AnonymousQualityTesting)
+**GitHub Repository**: [https://github.com/ImmanuelHickle/AnonymousQualityTesting](https://github.com/ImmanuelHickle/AnonymousQualityTesting)
 
-## 📝 Smart Contract
+## 📋 Smart Contract Details
 
-**Contract Address:** `0x2Cb950ba194fA703084bCE176F2e9FCdD9D0e8dD`
+**Contract Address**: `0xB867082d753197aeAf0E3523FE993Eae79F45342`
+**Network**: Sepolia Testnet
+**Chain ID**: 11155111
 
-**Network:** Sepolia Testnet
+## 🎥 Demo Video
 
-The smart contract implements FHE-based voting mechanisms and quality assessment protocols, ensuring all operations maintain user privacy and data confidentiality.
+[Watch our demonstration video showcasing the anonymous quality inspection process and privacy-preserving features]
 
-## 🎥 Demonstration
+## 📸 Blockchain Transaction Screenshots
 
-The platform includes comprehensive demonstration materials showcasing the complete workflow:
-
-### Demo Video
-A complete walkthrough demonstrating the platform's functionality, from wallet connection to quality test submission and voting processes.
-
-### Blockchain Transaction Screenshots
-
-#### Test Creation Process
-![Create Test Transaction](create%20test.png)
-*Screenshot showing successful quality test submission to the blockchain*
-
-#### Voting Process
-![Test Pass Transaction](test%20pass.png)
-*Screenshot demonstrating successful vote submission with encrypted data*
 
 ## ✨ Key Features
 
-- **Complete Privacy**: All testing data encrypted with FHE technology
-- **Decentralized Governance**: Community-driven quality assessment
-- **MetaMask Integration**: Seamless wallet connectivity
-- **Real-time Updates**: Live blockchain state synchronization
-- **Responsive Design**: Works across all devices and screen sizes
-- **Transparent Process**: Verifiable yet private quality assessments
+### 🛡️ Privacy Protection
+- **End-to-End Encryption**: All sensitive data encrypted using FHE
+- **Anonymous Inspectors**: Identity protection for quality control personnel
+- **Confidential Metrics**: Private calculation of quality statistics
 
-## 🛠 Technology Stack
+### 🔐 Security Features
+- **Role-Based Access**: Owner and inspector authorization system
+- **Data Integrity**: Blockchain immutability ensures tamper-proof records
+- **Privacy Compliance**: GDPR-compliant anonymous data handling
+
+### 📊 Quality Management
+- **Multi-Category Support**: Electronics, Automotive, Pharmaceutical, Food & Beverage, and more
+- **Real-Time Verification**: Instant inspection validation system
+- **Encrypted Analytics**: Privacy-preserving quality metrics calculation
+
+### 🌍 Decentralized Architecture
+- **Blockchain-Based**: Distributed ledger for transparency
+- **Smart Contract Automation**: Automated workflow management
+- **Cross-Platform Access**: Web-based interface for universal accessibility
+
+## 🚀 How It Works
+
+1. **Inspector Authorization**: Contract owner authorizes quality inspectors
+2. **Anonymous Inspection**: Inspectors record quality data with FHE encryption
+3. **Privacy-Preserving Storage**: All data stored encrypted on blockchain
+4. **Verification Process**: Authorized personnel can verify inspections
+5. **Confidential Analytics**: Calculate metrics while maintaining privacy
+
+## 🔧 Technology Stack
 
 - **Frontend**: HTML5, CSS3, JavaScript (ES6+)
 - **Blockchain**: Ethereum (Sepolia Testnet)
+- **Smart Contracts**: Solidity with FHE implementation
 - **Encryption**: Fully Homomorphic Encryption (FHE)
-- **Wallet**: MetaMask integration
-- **Smart Contracts**: Solidity ^0.8.24
-- **Web3**: Ethers.js library
+- **Web3**: Ethers.js for blockchain interaction
+- **Wallet Integration**: MetaMask support
 
-## 🏗 Architecture
+## 🏭 Use Cases
 
-The platform follows a decentralized architecture where:
+### Manufacturing Quality Control
+- Anonymous defect reporting
+- Confidential batch quality tracking
+- Privacy-preserving supplier assessments
 
-1. **Frontend Interface** - User-friendly web application for interaction
-2. **FHE Smart Contracts** - Privacy-preserving blockchain logic
-3. **Encrypted Storage** - All data stored in encrypted format
-4. **Consensus Mechanism** - Community-driven quality assessment
-5. **Result Finalization** - Transparent yet private outcome determination
+### Regulatory Compliance
+- GDPR-compliant quality documentation
+- Anonymous audit trails
+- Confidential compliance reporting
 
-## 🔒 Privacy Guarantees
+### Supply Chain Management
+- Private quality scores across supply chain
+- Anonymous vendor performance tracking
+- Confidential quality benchmarking
 
-- **Zero Knowledge**: No personal information required or stored
-- **Encrypted Votes**: All voting data protected by FHE
-- **Anonymous Participation**: Complete user anonymity maintained
-- **Secure Computation**: Processing on encrypted data only
-- **Verifiable Results**: Outcomes can be verified without revealing individual votes
+## 🔍 Privacy Guarantees
 
-## 🌟 Use Cases
+- **Data Confidentiality**: All quality metrics encrypted with FHE
+- **Inspector Anonymity**: Identity protection for all personnel
+- **Computation Privacy**: Encrypted data processing without decryption
+- **Access Control**: Granular permissions for data access
 
-- **Software Quality Assurance**: Anonymous testing of applications and systems
-- **Product Review Systems**: Privacy-preserving product assessments
-- **Academic Peer Review**: Confidential evaluation of research and papers
-- **Employee Feedback**: Anonymous workplace quality assessments
-- **Compliance Auditing**: Private regulatory compliance testing
+## 📱 User Interface
 
-## 📊 Platform Statistics
+The intuitive web interface provides:
+- Real-time connection status
+- Inspector authorization management
+- Anonymous inspection recording
+- Privacy-preserving metrics dashboard
+- Encrypted data visualization
 
-The dashboard provides real-time insights into:
-- Total number of quality tests conducted
-- Active tests awaiting evaluation
-- Completed assessments with encrypted results
-- Community participation metrics
+## 🔐 Security Audits
+
+Our smart contracts implement industry best practices:
+- Owner-based access control
+- Input validation and sanitization
+- Gas optimization for cost efficiency
+- Emergency pause functionality
+
+## 🌟 Innovation Highlights
+
+- **First-of-its-kind** FHE-based quality inspection system
+- **Zero-knowledge** quality metrics calculation
+- **Privacy-by-design** architecture
+- **Regulatory-compliant** anonymous data handling
+
+## 📞 Contact & Support
+
+For technical support, partnership inquiries, or contributions, please visit our GitHub repository or reach out through the project website.
 
 ---
 
-*Building the future of privacy-preserving quality assurance through blockchain technology and advanced cryptography.*
+*Revolutionizing quality control through privacy-preserving blockchain technology. Ensuring data confidentiality without compromising transparency or accountability.*

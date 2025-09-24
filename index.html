@@ -3,15 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anonymous Quality Testing Platform</title>
-    <!-- Multiple CDN fallbacks for ethers.js -->
-    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
-    <script>
-        // Fallback CDN loading
-        if (typeof ethers === 'undefined') {
-            document.write('<script src="https://unpkg.com/ethers@5.7.2/dist/ethers.umd.min.js"><\/script>');
-        }
-    </script>
+    <title>Privacy Quality Inspection System</title>
+    <script src="https://unpkg.com/ethers@5.7.2/dist/ethers.umd.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -33,91 +26,85 @@
         }
 
         .header {
-            text-align: center;
-            margin-bottom: 40px;
             background: rgba(255, 255, 255, 0.95);
-            padding: 30px;
+            padding: 2rem;
             border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
         }
 
         .header h1 {
-            color: #4a5568;
-            font-size: 2.5em;
-            margin-bottom: 10px;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+            font-size: 2.5rem;
         }
 
         .header p {
             color: #718096;
-            font-size: 1.2em;
+            font-size: 1.1rem;
         }
 
-        .main-content {
+        .connection-status {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 1rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            text-align: center;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .status-connected {
+            border-left: 5px solid #48bb78;
+        }
+
+        .status-disconnected {
+            border-left: 5px solid #f56565;
+        }
+
+        .main-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            margin-bottom: 30px;
+            gap: 2rem;
         }
 
         .card {
             background: rgba(255, 255, 255, 0.95);
+            padding: 2rem;
             border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
         }
 
-        .card:hover {
-            transform: translateY(-5px);
-        }
-
-        .card h2 {
-            color: #4a5568;
-            margin-bottom: 20px;
-            font-size: 1.8em;
-        }
-
-        .status-info {
-            background: #e6fffa;
-            border: 2px solid #38b2ac;
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 20px;
-        }
-
-        .status-info.error {
-            background: #fed7d7;
-            border-color: #e53e3e;
-        }
-
-        .status-info.success {
-            background: #c6f6d5;
-            border-color: #38a169;
+        .card h3 {
+            color: #2d3748;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 1.5rem;
         }
 
-        .form-group label {
+        label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 0.5rem;
             font-weight: 600;
             color: #4a5568;
         }
 
-        .form-group select,
-        .form-group input {
+        input, select, textarea {
             width: 100%;
-            padding: 12px;
+            padding: 0.75rem;
             border: 2px solid #e2e8f0;
             border-radius: 10px;
-            font-size: 16px;
+            font-size: 1rem;
             transition: border-color 0.3s ease;
         }
 
-        .form-group select:focus,
-        .form-group input:focus {
+        input:focus, select:focus, textarea:focus {
             outline: none;
             border-color: #667eea;
         }
@@ -125,20 +112,19 @@
         .btn {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
+            padding: 0.75rem 1.5rem;
             border: none;
-            padding: 15px 25px;
             border-radius: 10px;
-            font-size: 16px;
-            font-weight: 600;
             cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
             transition: all 0.3s ease;
             width: 100%;
-            margin-top: 10px;
         }
 
         .btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
         }
 
         .btn:disabled {
@@ -147,1792 +133,1394 @@
             transform: none;
         }
 
-        .results-section {
+        .btn-secondary {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+        }
+
+        .inspection-list {
+            grid-column: 1 / -1;
+            margin-top: 2rem;
+        }
+
+        .inspection-item {
             background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            padding: 30px;
-            margin-top: 30px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-        }
-
-        .quality-item {
-            background: #f7fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 15px;
-            transition: all 0.3s ease;
-        }
-
-        .quality-item:hover {
-            background: #edf2f7;
-            border-color: #cbd5e0;
-        }
-
-        .quality-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        .quality-title {
-            font-weight: 600;
-            color: #2d3748;
-        }
-
-        .quality-status {
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 0.9em;
-            font-weight: 600;
-        }
-
-        .status-pending { background: #fef5e7; color: #d69e2e; }
-        .status-passed { background: #c6f6d5; color: #38a169; }
-        .status-failed { background: #fed7d7; color: #e53e3e; }
-
-        /* Statistics Display Styling */
-        .overview-stats {
-            display: flex;
-            gap: 20px;
-            margin: 20px 0;
-            flex-wrap: wrap;
-        }
-
-        .stat-item {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            text-align: center;
-            min-width: 120px;
-            border: 2px solid #e9ecef;
-            transition: all 0.3s ease;
-        }
-
-        .stat-item:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-
-        .vote-buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-            position: relative;
-            z-index: 100;
-        }
-
-        .vote-btn {
-            flex: 1;
-            padding: 12px 16px;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            color: white;
-            position: relative;
-            z-index: 10;
-            user-select: none;
-            outline: none;
-            font-size: 14px;
-            min-height: 44px;
-            pointer-events: all;
-            display: inline-block;
-            text-align: center;
-            box-sizing: border-box;
-            line-height: 1.4;
-            text-decoration: none;
-        }
-
-        .preset-item {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 15px;
-            background: #f9f9f9;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .preset-item:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        }
-
-        .tests-container {
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 15px;
-            margin: 20px 0;
-        }
-
-        .test-card {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 15px;
-            background: #f9f9f9;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-
-        .test-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            border-color: #007bff;
-        }
-
-        .test-header {
-            display: flex;
-            justify-content: space-between;
+            grid-template-columns: 2fr 1fr 1fr 1fr auto;
+            gap: 1rem;
             align-items: center;
-            margin-bottom: 10px;
         }
 
-        .test-id {
-            background: #007bff;
-            color: white;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: bold;
+        .inspection-verified {
+            border-left: 5px solid #48bb78;
         }
 
-        .test-status {
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: bold;
+        .inspection-pending {
+            border-left: 5px solid #ed8936;
         }
 
-        .status-active {
-            background: #d4edda;
-            color: #155724;
+        .alert {
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
         }
 
-        .status-finalized {
-            background: #d1ecf1;
-            color: #0c5460;
+        .alert-success {
+            background-color: #c6f6d5;
+            border: 1px solid #9ae6b4;
+            color: #22543d;
         }
 
-        .test-title {
-            font-size: 16px;
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 5px;
+        .alert-error {
+            background-color: #fed7d7;
+            border: 1px solid #feb2b2;
+            color: #742a2a;
         }
 
-        .test-category {
-            background: #e9ecef;
-            color: #495057;
-            padding: 2px 6px;
-            border-radius: 3px;
-            font-size: 11px;
-            display: inline-block;
-            margin-bottom: 8px;
-        }
-
-        .test-description {
-            font-size: 14px;
-            color: #666;
-            line-height: 1.4;
-            margin-bottom: 10px;
-        }
-
-        .test-actions {
-            display: flex;
-            gap: 8px;
-            margin-top: 10px;
-        }
-
-        .action-btn {
-            padding: 6px 12px;
-            border: none;
-            border-radius: 4px;
-            font-size: 12px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .vote-pass-btn {
-            background: #28a745;
-            color: white;
-        }
-
-        .vote-fail-btn {
-            background: #dc3545;
-            color: white;
-        }
-
-        .finalize-btn {
-            background: #6c757d;
-            color: white;
-        }
-
-        .vote-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        }
-
-        .vote-btn:active {
-            transform: translateY(0);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
-
-        .vote-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .vote-pass {
-            background: #38a169;
-            color: white;
-            border: 2px solid #38a169;
-        }
-
-        .vote-pass:hover {
-            background: #2f855a;
-            border-color: #2f855a;
-        }
-
-        .vote-fail {
-            background: #e53e3e;
-            color: white;
-            border: 2px solid #e53e3e;
-        }
-
-        .vote-fail:hover {
-            background: #c53030;
-            border-color: #c53030;
-        }
-
-        .stats-grid {
+        .metrics-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
+            gap: 1rem;
+            margin-top: 1rem;
         }
 
-        .stat-card {
-            background: #f7fafc;
-            padding: 20px;
+        .metric-card {
+            background: rgba(102, 126, 234, 0.1);
+            padding: 1rem;
             border-radius: 10px;
             text-align: center;
         }
 
-        .stat-number {
-            font-size: 2em;
+        .metric-value {
+            font-size: 2rem;
             font-weight: bold;
             color: #667eea;
         }
 
-        .stat-label {
-            color: #718096;
-            margin-top: 5px;
+        .metric-label {
+            color: #4a5568;
+            margin-top: 0.5rem;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
 
         @media (max-width: 768px) {
-            .main-content {
+            .main-grid {
                 grid-template-columns: 1fr;
             }
 
-            .header h1 {
-                font-size: 2em;
+            .inspection-item {
+                grid-template-columns: 1fr;
+                text-align: center;
             }
 
-            .container {
-                padding: 10px;
+            .header h1 {
+                font-size: 2rem;
             }
+        }
+
+        .privacy-notice {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            border-left: 5px solid #4299e1;
+        }
+
+        .icon {
+            font-size: 1.2em;
+        }
+
+        .contract-info {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            font-family: monospace;
+            font-size: 0.9rem;
+            word-break: break-all;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>🔒 Anonymous Quality Testing Platform</h1>
-            <p>Secure, Private Quality Assurance with Fully Homomorphic Encryption</p>
+            <h1>🔒 Privacy Quality Inspection System</h1>
+            <p>Secure, Anonymous Quality Control using FHE Technology</p>
         </div>
 
-        <div id="connection-status" class="status-info">
-            <strong>Status:</strong> <span id="status-text">Click below to connect your MetaMask wallet to Sepolia testnet</span>
+        <div class="contract-info">
+            <strong>Contract Address:</strong> 0xB867082d753197aeAf0E3523FE993Eae79F45342<br>
+            <strong>Network:</strong> Sepolia Testnet
         </div>
 
-        <div id="debug-section" style="margin: 10px 0; text-align: center; display: none;">
-            <button onclick="debugContractStatus()" style="background: #17a2b8; color: white; border: none; padding: 8px 16px; border-radius: 5px; margin: 5px; cursor: pointer; font-size: 14px;">
-                🔍 Debug Contract Status
-            </button>
-            <div style="background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 5px; padding: 10px; margin: 10px; font-size: 12px; text-align: left;">
-                <strong>💡 Troubleshooting Tips:</strong><br>
-                • Use Debug button to check contract state<br>
-                • You can only vote once per test<br>
-                • Cannot vote on finalized tests<br>
-                • Submit a test first if none exist
-            </div>
+        <div class="privacy-notice">
+            <strong>🛡️ Privacy Protected:</strong> All quality scores, defect counts, and batch numbers are encrypted on-chain using Fully Homomorphic Encryption. Only authorized personnel can access sensitive data while maintaining complete anonymity and data integrity.
         </div>
 
-        <div id="connection-controls" style="margin: 10px 0; text-align: center;">
-            <button id="connect-wallet-btn" onclick="init()" style="background: #007bff; color: white; border: none; padding: 15px 30px; border-radius: 8px; margin: 5px; cursor: pointer; font-size: 16px; font-weight: 600;">
-                🦊 Connect MetaMask Wallet
-            </button>
-            <button onclick="init()" style="background: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 5px; margin: 5px; cursor: pointer; display: none;" id="retry-btn">
-                🔄 Retry Connection
-            </button>
-            <button onclick="switchToSepolia()" style="background: #6f42c1; color: white; border: none; padding: 10px 20px; border-radius: 5px; margin: 5px; cursor: pointer; display: none;" id="switch-network-btn">
-                🔗 Switch to Sepolia
-            </button>
+        <div class="connection-status" id="connectionStatus">
+            <span id="connectionText">Connect your wallet to start</span>
         </div>
 
-        <div class="main-content" id="main-content" style="display: none;">
-
-            <!-- Available Quality Tests -->
+        <div class="main-grid">
             <div class="card">
-                <h2>📋 Available Quality Tests</h2>
-                <p>Click on any test to interact via MetaMask</p>
+                <h3><span class="icon">📊</span> Record Quality Inspection</h3>
+                <form id="inspectionForm">
+                    <div class="form-group">
+                        <label for="qualityScore">Quality Score (0-100):</label>
+                        <input type="number" id="qualityScore" min="0" max="100" required>
+                        <small>Enter the overall quality score for the product</small>
+                    </div>
 
-                <div id="available-tests" class="tests-container">
-                    <!-- Tests will be loaded here dynamically -->
-                </div>
+                    <div class="form-group">
+                        <label for="defectCount">Defect Count:</label>
+                        <input type="number" id="defectCount" min="0" max="255" required>
+                        <small>Number of defects found during inspection</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="productBatch">Product Batch Number:</label>
+                        <input type="number" id="productBatch" required>
+                        <small>Unique batch identifier for the product</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="productCategory">Product Category:</label>
+                        <select id="productCategory" required>
+                            <option value="">Select Category</option>
+                            <option value="Electronics">Electronics</option>
+                            <option value="Automotive">Automotive</option>
+                            <option value="Pharmaceutical">Pharmaceutical</option>
+                            <option value="Food">Food & Beverage</option>
+                            <option value="Textile">Textile</option>
+                            <option value="Medical">Medical Devices</option>
+                            <option value="Industrial">Industrial</option>
+                            <option value="Aerospace">Aerospace</option>
+                            <option value="Chemical">Chemical</option>
+                            <option value="Consumer">Consumer Goods</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn" id="recordBtn">
+                        <span id="recordBtnText">Record Inspection</span>
+                    </button>
+                </form>
             </div>
-
 
             <div class="card">
-                <h2>Submit Custom Quality Test</h2>
-                <div class="form-group">
-                    <label for="product-category">Product Category:</label>
-                    <select id="product-category">
-                        <option value="">Select Category</option>
-                        <option value="software">Software Application</option>
-                        <option value="hardware">Hardware Device</option>
-                        <option value="mobile-app">Mobile Application</option>
-                        <option value="web-service">Web Service</option>
-                        <option value="api">API Service</option>
-                        <option value="database">Database System</option>
-                    </select>
+                <h3><span class="icon">✅</span> Inspector Management</h3>
+                <div class="alert" id="authorizationAlert" style="background-color: #fed7d7; border: 1px solid #feb2b2; color: #742a2a; margin-bottom: 1rem;">
+                    <strong>🚨 Authorization Required:</strong> You need to be authorized by the contract owner to use this system.
+                    <br><strong>Your address:</strong> <code id="currentUserAddress">Connect wallet to see address</code>
+                    <br><strong>Contract owner:</strong> <code id="contractOwnerAddress">Loading...</code>
+                    <br><em>Contact the owner to get authorized as an inspector.</em>
                 </div>
+                <div class="form-group">
+                    <label for="newInspector">Authorize Inspector Address:</label>
+                    <input type="text" id="newInspector" placeholder="0x..." pattern="0x[a-fA-F0-9]{40}">
+                    <small>Enter the Ethereum address of the new inspector (Owner only)</small>
+                </div>
+                <button class="btn btn-secondary" onclick="authorizeInspector()">
+                    Authorize Inspector
+                </button>
+
+                <hr style="margin: 2rem 0; border: 1px solid #e2e8f0;">
 
                 <div class="form-group">
-                    <label for="test-type">Test Type:</label>
-                    <select id="test-type">
-                        <option value="">Select Test Type</option>
-                        <option value="functionality">Functionality Test</option>
-                        <option value="performance">Performance Test</option>
-                        <option value="security">Security Test</option>
-                        <option value="usability">Usability Test</option>
-                        <option value="compatibility">Compatibility Test</option>
-                        <option value="reliability">Reliability Test</option>
-                    </select>
+                    <label for="inspectionId">Verify Inspection ID:</label>
+                    <input type="number" id="inspectionId" min="0">
+                    <small>Enter the inspection ID to verify</small>
                 </div>
-
-                <div class="form-group">
-                    <label for="test-description">Test Description:</label>
-                    <input type="text" id="test-description" placeholder="Brief description of the test case">
-                </div>
-
-                <button class="btn" onclick="submitQualityTest()">Submit Test for Review</button>
+                <button class="btn btn-secondary" onclick="verifyInspection()">
+                    Verify Inspection
+                </button>
             </div>
-
         </div>
 
-        <div class="results-section">
-            <h2>Quality Test Results</h2>
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-number" id="total-tests">0</div>
-                    <div class="stat-label">Total Tests</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number" id="passed-tests">0</div>
-                    <div class="stat-label">Passed Tests</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number" id="failed-tests">0</div>
-                    <div class="stat-label">Failed Tests</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number" id="pending-tests-count">0</div>
-                    <div class="stat-label">Pending Tests</div>
-                </div>
+        <div class="card inspection-list">
+            <h3><span class="icon">📋</span> Recent Inspection Records</h3>
+            <div id="inspectionsList">
+                <p style="text-align: center; color: #718096;">Loading inspections...</p>
             </div>
-            <div id="quality-results"></div>
+            <button class="btn" onclick="loadInspections()" style="margin-top: 1rem;">
+                Refresh Inspections
+            </button>
+        </div>
+
+        <div class="card inspection-list">
+            <h3><span class="icon">📈</span> Quality Metrics</h3>
+            <div class="form-group">
+                <label for="categorySelect">Select Category for Metrics:</label>
+                <select id="categorySelect">
+                    <option value="">Select Category</option>
+                    <option value="Electronics">Electronics</option>
+                    <option value="Automotive">Automotive</option>
+                    <option value="Pharmaceutical">Pharmaceutical</option>
+                    <option value="Food">Food & Beverage</option>
+                    <option value="Textile">Textile</option>
+                    <option value="Medical">Medical Devices</option>
+                    <option value="Industrial">Industrial</option>
+                    <option value="Aerospace">Aerospace</option>
+                    <option value="Chemical">Chemical</option>
+                    <option value="Consumer">Consumer Goods</option>
+                </select>
+            </div>
+            <button class="btn" onclick="calculateMetrics()">
+                Calculate Category Metrics
+            </button>
+            <div id="metricsDisplay" class="metrics-grid"></div>
+        </div>
+
+        <div class="card inspection-list">
+            <h3><span class="icon">ℹ️</span> System Information</h3>
+            <div style="font-family: monospace; font-size: 0.9rem;">
+                <p><strong>Contract:</strong> 0xB867082d753197aeAf0E3523FE993Eae79F45342</p>
+                <p><strong>Network:</strong> Sepolia Testnet (Chain ID: 11155111)</p>
+                <p><strong>Privacy:</strong> Fully Homomorphic Encryption (FHE)</p>
+                <p><strong>Status:</strong> <span id="contractStatus">Connecting...</span></p>
+            </div>
+            <button class="btn btn-secondary" onclick="refreshContractInfo()" style="margin-top: 1rem;">
+                🔄 Refresh Contract Info
+            </button>
         </div>
     </div>
 
     <script>
-        // FHEVM Anonymous Quality Testing DApp
-        // Type-safe parameter handling for Solidity ^0.8.24
-        // Using precise ABI signatures for function calls
+        // Privacy Quality Inspection System
+        let provider;
+        let signer;
+        let contract;
+        let userAddress;
 
-        // Contract configuration
-        const CONTRACT_ADDRESS = "0x2Cb950ba194fA703084bCE176F2e9FCdD9D0e8dD"; // Updated contract address
-
-        const NETWORK_CONFIG = {
-            chainId: "0xaa36a7", // Sepolia testnet (11155111)
-            chainName: "Sepolia Test Network",
-            rpcUrls: ["https://sepolia.infura.io/v3/YOUR_KEY", "https://rpc.sepolia.org"],
-            nativeCurrency: {
-                name: "SepoliaETH",
-                symbol: "ETH",
-                decimals: 18
-            },
-            blockExplorerUrls: ["https://sepolia.etherscan.io/"]
-        };
-
-        // Contract ABI for FHE Quality Testing
+        // Contract Configuration
+        const CONTRACT_ADDRESS = "0xB867082d753197aeAf0E3523FE993Eae79F45342";
         const CONTRACT_ABI = [
-            "function submitQualityTest(string memory _category, string memory _testType, string memory _description) external returns (uint256)",
-            "function voteOnTest(uint256 _testId, uint8 _vote) external",
-            "function finalizeTest(uint256 _testId) external",
-            "function getTestDetails(uint256 _testId) external view returns (string memory category, string memory testType, string memory description, uint256 yesVotes, uint256 noVotes, bool isFinalized)",
-            "function getTestResult(uint256 _testId) external view returns (bool hasPassed, bool isRevealed)",
-            "function getTotalTests() external view returns (uint256)",
-            "function getTestSubmitter(uint256 _testId) external view returns (address)",
-            "function getTestTimestamp(uint256 _testId) external view returns (uint256)",
-            "function hasUserVoted(uint256 _testId, address _user) external view returns (bool)",
-            "function forceFinalize(uint256 _testId) external",
-            "function getEncryptedVotes(uint256 _testId) external returns (uint256, uint256)"
+            {
+                "inputs": [],
+                "stateMutability": "nonpayable",
+                "type": "constructor"
+            },
+            {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": true,
+                        "internalType": "address",
+                        "name": "inspector",
+                        "type": "address"
+                    },
+                    {
+                        "indexed": true,
+                        "internalType": "address",
+                        "name": "authorizer",
+                        "type": "address"
+                    }
+                ],
+                "name": "InspectorAuthorized",
+                "type": "event"
+            },
+            {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": true,
+                        "internalType": "uint256",
+                        "name": "inspectionId",
+                        "type": "uint256"
+                    },
+                    {
+                        "indexed": true,
+                        "internalType": "address",
+                        "name": "inspector",
+                        "type": "address"
+                    },
+                    {
+                        "indexed": false,
+                        "internalType": "string",
+                        "name": "category",
+                        "type": "string"
+                    },
+                    {
+                        "indexed": false,
+                        "internalType": "uint256",
+                        "name": "timestamp",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "InspectionRecorded",
+                "type": "event"
+            },
+            {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": true,
+                        "internalType": "uint256",
+                        "name": "inspectionId",
+                        "type": "uint256"
+                    },
+                    {
+                        "indexed": true,
+                        "internalType": "address",
+                        "name": "verifier",
+                        "type": "address"
+                    }
+                ],
+                "name": "InspectionVerified",
+                "type": "event"
+            },
+            {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": true,
+                        "internalType": "string",
+                        "name": "category",
+                        "type": "string"
+                    },
+                    {
+                        "indexed": false,
+                        "internalType": "uint256",
+                        "name": "totalCount",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "MetricsUpdated",
+                "type": "event"
+            },
+            {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": true,
+                        "internalType": "string",
+                        "name": "category",
+                        "type": "string"
+                    },
+                    {
+                        "indexed": false,
+                        "internalType": "uint256",
+                        "name": "inspectionId",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "QualityAlert",
+                "type": "event"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "_inspector",
+                        "type": "address"
+                    }
+                ],
+                "name": "authorizeInspector",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "",
+                        "type": "address"
+                    }
+                ],
+                "name": "authorizedInspectors",
+                "outputs": [
+                    {
+                        "internalType": "bool",
+                        "name": "",
+                        "type": "bool"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "string",
+                        "name": "_category",
+                        "type": "string"
+                    }
+                ],
+                "name": "calculateCategoryMetrics",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "string",
+                        "name": "",
+                        "type": "string"
+                    }
+                ],
+                "name": "categoryMetrics",
+                "outputs": [
+                    {
+                        "internalType": "bool",
+                        "name": "metricsCalculated",
+                        "type": "bool"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "contractPaused",
+                "outputs": [
+                    {
+                        "internalType": "bool",
+                        "name": "",
+                        "type": "bool"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "getContractStats",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "totalInspections",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "totalInspectors",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "contractOwner",
+                        "type": "address"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "_inspectionId",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "getInspectionInfo",
+                "outputs": [
+                    {
+                        "internalType": "address",
+                        "name": "inspector",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "timestamp",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "bool",
+                        "name": "isVerified",
+                        "type": "bool"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "productCategory",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "bytes32",
+                        "name": "inspectionHash",
+                        "type": "bytes32"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "_inspector",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "_offset",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "_limit",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "getInspectorInspections",
+                "outputs": [
+                    {
+                        "internalType": "uint256[]",
+                        "name": "",
+                        "type": "uint256[]"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "_inspector",
+                        "type": "address"
+                    }
+                ],
+                "name": "getInspectorHistoryCount",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "string",
+                        "name": "_category",
+                        "type": "string"
+                    }
+                ],
+                "name": "hasCategoryMetrics",
+                "outputs": [
+                    {
+                        "internalType": "bool",
+                        "name": "",
+                        "type": "bool"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "inspectionCount",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "inspections",
+                "outputs": [
+                    {
+                        "internalType": "address",
+                        "name": "inspector",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "timestamp",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "bool",
+                        "name": "isVerified",
+                        "type": "bool"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "productCategory",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "bytes32",
+                        "name": "inspectionHash",
+                        "type": "bytes32"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "owner",
+                "outputs": [
+                    {
+                        "internalType": "address",
+                        "name": "",
+                        "type": "address"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "pauseContract",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint8",
+                        "name": "_qualityScore",
+                        "type": "uint8"
+                    },
+                    {
+                        "internalType": "uint8",
+                        "name": "_defectCount",
+                        "type": "uint8"
+                    },
+                    {
+                        "internalType": "uint32",
+                        "name": "_productBatch",
+                        "type": "uint32"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "_productCategory",
+                        "type": "string"
+                    }
+                ],
+                "name": "recordInspection",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "_inspector",
+                        "type": "address"
+                    }
+                ],
+                "name": "revokeInspector",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "unpauseContract",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "_inspectionId",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "verifyInspection",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            }
         ];
 
-        let provider, signer, contract;
-        let currentAccount = null;
-
-        // Contract debug function
-        async function debugContract() {
-            const statusContent = document.getElementById('contract-status-content');
-            let statusHTML = '<h4>合约诊断结果:</h4><ul>';
-
-            try {
-                console.log('🔍 Starting contract debug...');
-
-                // Check contract address
-                console.log('Contract address:', CONTRACT_ADDRESS);
-                statusHTML += `<li>合约地址: ${CONTRACT_ADDRESS}</li>`;
-
-                // Check if contract exists
-                const contractCode = await provider.getCode(CONTRACT_ADDRESS);
-                const contractExists = contractCode !== '0x';
-                console.log('Contract code exists:', contractExists);
-                console.log('Contract code length:', contractCode.length);
-
-                statusHTML += `<li>合约代码存在: ${contractExists ? '✅ 是' : '❌ 否'}</li>`;
-                statusHTML += `<li>合约代码长度: ${contractCode.length} 字符</li>`;
-
-                // Try to call a simple view function
-                try {
-                    const totalTests = await contract.getTotalTests();
-                    console.log('Total tests from contract:', totalTests.toString());
-                    statusHTML += `<li>getTotalTests() 调用: ✅ 成功 (${totalTests.toString()})</li>`;
-                } catch (viewError) {
-                    console.error('Failed to call getTotalTests:', viewError);
-                    statusHTML += `<li>getTotalTests() 调用: ❌ 失败 - ${viewError.message}</li>`;
-                }
-
-                // Check network
-                const network = await provider.getNetwork();
-                console.log('Current network:', network);
-                statusHTML += `<li>网络: ${network.name} (ID: ${network.chainId})</li>`;
-
-                // Check account balance
-                if (currentAccount) {
-                    const balance = await provider.getBalance(currentAccount);
-                    console.log('Account balance:', ethers.utils.formatEther(balance), 'ETH');
-                    statusHTML += `<li>账户余额: ${ethers.utils.formatEther(balance)} ETH</li>`;
-                }
-
-            } catch (error) {
-                console.error('Debug contract error:', error);
-                statusHTML += `<li>调试过程出错: ❌ ${error.message}</li>`;
-            }
-
-            statusHTML += '</ul>';
-            statusContent.innerHTML = statusHTML;
-        }
-
-        // Test contract functions step by step
-        async function testContractFunctions() {
-            const statusContent = document.getElementById('contract-status-content');
-            let currentHTML = statusContent.innerHTML;
-            currentHTML += '<h4>函数测试结果:</h4><ul>';
-
-            try {
-                console.log('🧪 Testing contract functions...');
-
-                // Test 2: Try callStatic on submitQualityTest with minimal params
-                try {
-                    const testData = await contract.callStatic.submitQualityTest(
-                        "test",
-                        "test",
-                        "test"
-                    );
-                    console.log('✅ submitQualityTest callStatic works:', testData);
-                    currentHTML += `<li>submitQualityTest() 测试: ✅ 成功</li>`;
-                } catch (error) {
-                    console.error('❌ submitQualityTest callStatic failed:', error);
-                    currentHTML += `<li>submitQualityTest() 测试: ❌ 失败</li>`;
-
-                    // Try to decode the error
-                    if (error.data) {
-                        console.log('Error data:', error.data);
-
-                        // Common Solidity error signatures
-                        const errorSignatures = {
-                            '0x08c379a0': 'Error(string)', // require with message
-                            '0x4e487b71': 'Panic(uint256)', // assert, division by zero, etc.
-                            '0x9de3392c': 'FHE initialization error' // suspected FHE error
-                        };
-
-                        const errorSelector = error.data.slice(0, 10);
-                        if (errorSignatures[errorSelector]) {
-                            console.log('Known error type:', errorSignatures[errorSelector]);
-                            currentHTML += `<li>错误类型: ${errorSignatures[errorSelector]}</li>`;
-
-                            if (errorSelector === '0x08c379a0') {
-                                // Try to decode the error message
-                                try {
-                                    const decoded = ethers.utils.defaultAbiCoder.decode(['string'], '0x' + error.data.slice(10));
-                                    console.log('Revert message:', decoded[0]);
-                                    currentHTML += `<li>错误消息: ${decoded[0]}</li>`;
-                                } catch (e) {
-                                    console.log('Could not decode revert message');
-                                    currentHTML += `<li>无法解码错误消息</li>`;
-                                }
-                            } else if (errorSelector === '0x9de3392c') {
-                                currentHTML += `<li><strong>⚠️ FHE初始化错误 - 合约可能没有正确配置FHE功能</strong></li>`;
-                            }
-                        } else {
-                            console.log('Unknown error selector:', errorSelector);
-                            currentHTML += `<li>未知错误代码: ${errorSelector}</li>`;
-                        }
-                    }
-
-                    if (error.reason) {
-                        console.log('Error reason:', error.reason);
-                        currentHTML += `<li>错误原因: ${error.reason}</li>`;
-                    }
-                }
-
-                // Add recommendation based on test results
-                currentHTML += '</ul><div style="margin-top: 15px; padding: 10px; background: #f5f5f5; border-radius: 5px;">';
-                currentHTML += '<strong>建议:</strong><br>';
-                currentHTML += '• 如果看到FHE初始化错误，这可能表明当前合约地址不支持FHE操作<br>';
-                currentHTML += '• 建议联系合约部署者确认FHE配置是否正确<br>';
-                currentHTML += '• 或者尝试使用简化版本的合约进行测试';
-                currentHTML += '</div>';
-
-                // Show solution buttons if there are issues
-                document.getElementById('contract-actions').style.display = 'block';
-
-            } catch (error) {
-                console.error('❌ Contract function testing failed:', error);
-                currentHTML += `<li>函数测试过程出错: ❌ ${error.message}</li></ul>`;
-
-                // Show solution buttons for errors
-                document.getElementById('contract-actions').style.display = 'block';
-            }
-
-            statusContent.innerHTML = currentHTML;
-        }
-
-        // Solution functions for contract issues
-        let isTestMode = false;
-        let autoDemoMode = false;
-
-        function switchToTestMode() {
-            isTestMode = true;
-            updateStatus('已切换到测试模式 - 将模拟合约功能，不发送实际交易', 'info');
-
-            // Hide the contract issue panel
-            document.getElementById('contract-status-panel').style.display = 'none';
-
-            // Update the preset buttons to use test mode
-            const presetButtons = document.querySelectorAll('.preset-item button');
-            presetButtons.forEach(button => {
-                const originalOnclick = button.getAttribute('onclick');
-                button.setAttribute('onclick', originalOnclick.replace('deployPresetTest', 'simulateDeployment'));
-                button.style.background = '#9e9e9e';
-                button.textContent = button.textContent.replace('Deploy', '模拟部署');
-            });
-        }
-
-        function simulateDeployment(category, testType, description) {
-            console.log('🧪 Simulating deployment:', category, testType, description);
-            updateStatus('Demo deployment successful! Test ID: ' + Math.floor(Math.random() * 1000), 'success');
-
-            // Simulate adding to statistics - only update elements that exist
-            const totalTestsElement = document.getElementById('total-tests');
-            if (totalTestsElement) {
-                const currentTotal = parseInt(totalTestsElement.textContent) || 0;
-                totalTestsElement.textContent = (currentTotal + 1).toString();
-            }
-
-            const pendingTestsElement = document.getElementById('pending-tests');
-            if (pendingTestsElement) {
-                const currentPending = parseInt(pendingTestsElement.textContent) || 0;
-                pendingTestsElement.textContent = (currentPending + 1).toString();
-            }
-        }
-
-        function deploySimpleContract() {
-            updateStatus('准备部署简化合约...', 'info');
-
-            // Display deployment information
-            const statusContent = document.getElementById('contract-status-content');
-            statusContent.innerHTML += `
-                <div style="margin-top: 15px; padding: 10px; background: #e3f2fd; border-radius: 5px;">
-                    <h4>📋 简化合约部署指南:</h4>
-                    <p>1. 复制 SimpleQualityTesting.sol 合约代码</p>
-                    <p>2. 使用 Remix IDE 或 Hardhat 部署到 Sepolia</p>
-                    <p>3. 获取新的合约地址后，更新前端配置</p>
-                    <p>4. 简化版本不包含FHE功能，但保持相同接口</p>
-                    <a href="#" onclick="copySimpleContract()" style="color: #1976d2; text-decoration: underline;">
-                        📋 点击复制简化合约代码
-                    </a>
-                </div>
-            `;
-        }
-
-        async function copySimpleContract() {
-            const simpleContractCode = `// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.24;
-
-// Simplified version without FHE for testing
-contract SimpleQualityTesting {
-
-    struct QualityTest {
-        string category;
-        string testType;
-        string description;
-        address submitter;
-        uint256 timestamp;
-        uint256 yesVotes;
-        uint256 noVotes;
-        bool isFinalized;
-        bool result;
-        bool resultRevealed;
-    }
-
-    mapping(uint256 => QualityTest) public qualityTests;
-    mapping(uint256 => mapping(address => bool)) public hasVoted;
-    uint256 public totalTests;
-
-    event QualityTestSubmitted(uint256 indexed testId, string category, string testType, address submitter);
-    event VoteSubmitted(uint256 indexed testId, address voter);
-    event TestFinalized(uint256 indexed testId, bool passed);
-
-    function submitQualityTest(string memory _category, string memory _testType, string memory _description) external returns (uint256) {
-        uint256 testId = totalTests;
-        qualityTests[testId] = QualityTest({
-            category: _category, testType: _testType, description: _description,
-            submitter: msg.sender, timestamp: block.timestamp,
-            yesVotes: 0, noVotes: 0, isFinalized: false, result: false, resultRevealed: false
-        });
-        totalTests++;
-        emit QualityTestSubmitted(testId, _category, _testType, msg.sender);
-        return testId;
-    }
-
-    function voteOnTest(uint256 _testId, bool _passed) external {
-        require(_testId < totalTests, "Test does not exist");
-        require(!qualityTests[_testId].isFinalized, "Test already finalized");
-        require(!hasVoted[_testId][msg.sender], "Already voted on this test");
-
-        QualityTest storage test = qualityTests[_testId];
-        if (_passed) { test.yesVotes += 1; } else { test.noVotes += 1; }
-        hasVoted[_testId][msg.sender] = true;
-        emit VoteSubmitted(_testId, msg.sender);
-    }
-
-    function finalizeTest(uint256 _testId) external {
-        require(_testId < totalTests, "Test does not exist");
-        require(!qualityTests[_testId].isFinalized, "Test already finalized");
-        QualityTest storage test = qualityTests[_testId];
-        bool yesWins = test.yesVotes > test.noVotes;
-        test.result = yesWins; test.isFinalized = true; test.resultRevealed = true;
-        emit TestFinalized(_testId, yesWins);
-    }
-
-    function getTestDetails(uint256 _testId) external view returns (string memory category, string memory testType, string memory description, uint256 yesVotes, uint256 noVotes, bool isFinalized) {
-        require(_testId < totalTests, "Test does not exist");
-        QualityTest storage test = qualityTests[_testId];
-        return (test.category, test.testType, test.description, test.yesVotes, test.noVotes, test.isFinalized);
-    }
-
-    function getTestResult(uint256 _testId) external view returns (bool hasPassed, bool isRevealed) {
-        require(_testId < totalTests, "Test does not exist");
-        QualityTest storage test = qualityTests[_testId];
-        return test.isFinalized ? (test.result, true) : (false, false);
-    }
-
-    function getTotalTests() external view returns (uint256) { return totalTests; }
-    function getTestSubmitter(uint256 _testId) external view returns (address) { require(_testId < totalTests, "Test does not exist"); return qualityTests[_testId].submitter; }
-    function getTestTimestamp(uint256 _testId) external view returns (uint256) { require(_testId < totalTests, "Test does not exist"); return qualityTests[_testId].timestamp; }
-    function hasUserVoted(uint256 _testId, address _user) external view returns (bool) { require(_testId < totalTests, "Test does not exist"); return hasVoted[_testId][_user]; }
-    function forceFinalize(uint256 _testId) external {
-        require(_testId < totalTests, "Test does not exist");
-        require(qualityTests[_testId].submitter == msg.sender, "Only submitter can force finalize");
-        QualityTest storage test = qualityTests[_testId];
-        require(!test.isFinalized, "Test already finalized");
-        bool yesWins = test.yesVotes > test.noVotes;
-        test.result = yesWins; test.isFinalized = true; test.resultRevealed = true;
-        emit TestFinalized(_testId, yesWins);
-    }
-    function getEncryptedVotes(uint256 _testId) external view returns (uint256, uint256) {
-        require(_testId < totalTests, "Test does not exist");
-        QualityTest storage test = qualityTests[_testId];
-        return (test.yesVotes, test.noVotes);
-    }
-}`;
-
-            try {
-                await navigator.clipboard.writeText(simpleContractCode);
-                updateStatus('✅ 简化合约代码已复制到剪贴板! 可以直接在 Remix IDE 中部署', 'success');
-            } catch (error) {
-                // Fallback for older browsers
-                console.log('Contract code:', simpleContractCode);
-                updateStatus('⚠️ 无法自动复制，请查看控制台获取合约代码', 'info');
-            }
-        }
-
-        function showContractInfo() {
-            const statusContent = document.getElementById('contract-status-content');
-            statusContent.innerHTML += `
-                <div style="margin-top: 15px; padding: 10px; background: #f3e5f5; border-radius: 5px;">
-                    <h4>📋 当前合约信息:</h4>
-                    <p><strong>地址:</strong> ${CONTRACT_ADDRESS}</p>
-                    <p><strong>网络:</strong> Sepolia Testnet</p>
-                    <p><strong>状态:</strong> FHE功能异常，交易被回滚</p>
-                    <p><strong>问题:</strong> 合约的FHE库可能没有正确初始化</p>
-                    <p><strong>建议:</strong> 使用简化版本或联系合约部署者</p>
-                </div>
-            `;
-        }
-
-        // Load available tests for interaction
-        async function loadAvailableTests() {
-            const availableTestsContainer = document.getElementById('available-tests');
-
-            // Always show demo tests first to ensure something displays
-            console.log('Loading available tests...');
-            let allTestsHTML = createDemoTests();
-            availableTestsContainer.innerHTML = allTestsHTML;
-            updateStatus('Showing sample tests (demo mode)', 'info');
-
-            // If not in demo mode, try to load real tests and add them to demo tests
-            if (!autoDemoMode && !isTestMode && contract) {
-                try {
-                    console.log('Attempting to load real tests from contract...');
-                    const totalTests = await contract.getTotalTests();
-                    console.log('Total tests from contract:', totalTests.toString());
-
-                    if (totalTests > 0) {
-                        let realTestsHTML = '';
-                        for (let i = 0; i < Math.min(totalTests, 10); i++) {
-                            try {
-                                const [category, testType, description, yesVotes, noVotes, isFinalized] = await contract.getTestDetails(i);
-                                const submitter = await contract.getTestSubmitter(i);
-                                const timestamp = await contract.getTestTimestamp(i);
-                                const hasVoted = await contract.hasUserVoted(i, currentAccount);
-
-                                // Use a different testId range for real tests (starting from 100)
-                                realTestsHTML += createTestCard(100 + i, category, testType, description, isFinalized, hasVoted, submitter, timestamp);
-                                console.log(`Loaded real test ${100 + i}: ${testType}`);
-                            } catch (error) {
-                                console.error(`Error loading test ${i}:`, error);
-                            }
-                        }
-
-                        if (realTestsHTML) {
-                            // Combine demo tests and real tests
-                            availableTestsContainer.innerHTML = allTestsHTML + realTestsHTML;
-                            updateStatus(`Loaded ${totalTests} real tests + 5 demo tests`, 'success');
-                        }
-                    }
-                } catch (error) {
-                    console.log('Failed to load real tests, keeping demo tests:', error.message);
-                    // Keep demo tests displayed
-                    autoDemoMode = true;
-                }
-            }
-        }
-
-        // Create demo tests when contract fails
-        function createDemoTests() {
-            return `
-                <div class="test-card" onclick="interactWithTest(0)">
-                    <div class="test-header">
-                        <span class="test-id">Test #0</span>
-                        <span class="test-status status-active">Active</span>
-                    </div>
-                    <div class="test-title">Web Application Security Audit</div>
-                    <span class="test-category">web-service</span>
-                    <div class="test-description">Comprehensive security testing including XSS, SQL injection, and authentication vulnerabilities</div>
-                    <div style="font-size: 12px; color: #888; margin: 8px 0;">
-                        By 0x1234...5678 • ${new Date().toLocaleDateString()}
-                    </div>
-                    <div class="test-actions">
-                        <button class="action-btn vote-pass-btn" onclick="event.stopPropagation(); voteOnTest(0, true)">✓ Pass</button>
-                        <button class="action-btn vote-fail-btn" onclick="event.stopPropagation(); voteOnTest(0, false)">✗ Fail</button>
-                        <button class="action-btn finalize-btn" onclick="event.stopPropagation(); finalizeTest(0)">Finalize</button>
-                    </div>
-                </div>
-                <div class="test-card" onclick="interactWithTest(1)">
-                    <div class="test-header">
-                        <span class="test-id">Test #1</span>
-                        <span class="test-status status-active">Active</span>
-                    </div>
-                    <div class="test-title">Mobile App Performance Test</div>
-                    <span class="test-category">mobile-app</span>
-                    <div class="test-description">Performance evaluation covering load times, memory usage, and battery consumption metrics</div>
-                    <div style="font-size: 12px; color: #888; margin: 8px 0;">
-                        By 0x9abc...def0 • ${new Date().toLocaleDateString()}
-                    </div>
-                    <div class="test-actions">
-                        <button class="action-btn vote-pass-btn" onclick="event.stopPropagation(); voteOnTest(1, true)">✓ Pass</button>
-                        <button class="action-btn vote-fail-btn" onclick="event.stopPropagation(); voteOnTest(1, false)">✗ Fail</button>
-                        <button class="action-btn finalize-btn" onclick="event.stopPropagation(); finalizeTest(1)">Finalize</button>
-                    </div>
-                </div>
-                <div class="test-card" onclick="interactWithTest(2)">
-                    <div class="test-header">
-                        <span class="test-id">Test #2</span>
-                        <span class="test-status status-finalized">Finalized</span>
-                    </div>
-                    <div class="test-title">API Functionality Testing</div>
-                    <span class="test-category">api</span>
-                    <div class="test-description">Complete API endpoint testing with data validation and comprehensive error handling</div>
-                    <div style="font-size: 12px; color: #888; margin: 8px 0;">
-                        By 0xfedc...ba98 • ${new Date(Date.now() - 86400000).toLocaleDateString()}
-                    </div>
-                    <div class="test-actions">
-                        <span style="color: #28a745; font-weight: bold;">✓ Passed (Demo)</span>
-                    </div>
-                </div>
-                <div class="test-card" onclick="interactWithTest(3)">
-                    <div class="test-header">
-                        <span class="test-id">Test #3</span>
-                        <span class="test-status status-active">Active</span>
-                    </div>
-                    <div class="test-title">Database Reliability Testing</div>
-                    <span class="test-category">database</span>
-                    <div class="test-description">Database reliability testing including backup/recovery scenarios and data consistency checks</div>
-                    <div style="font-size: 12px; color: #888; margin: 8px 0;">
-                        By 0x2468...ace0 • ${new Date().toLocaleDateString()}
-                    </div>
-                    <div class="test-actions">
-                        <button class="action-btn vote-pass-btn" onclick="event.stopPropagation(); voteOnTest(3, true)">✓ Pass</button>
-                        <button class="action-btn vote-fail-btn" onclick="event.stopPropagation(); voteOnTest(3, false)">✗ Fail</button>
-                        <button class="action-btn finalize-btn" onclick="event.stopPropagation(); finalizeTest(3)">Finalize</button>
-                    </div>
-                </div>
-                <div class="test-card" onclick="interactWithTest(4)">
-                    <div class="test-header">
-                        <span class="test-id">Test #4</span>
-                        <span class="test-status status-active">Active</span>
-                    </div>
-                    <div class="test-title">Software Usability Testing</div>
-                    <span class="test-category">software</span>
-                    <div class="test-description">UI/UX design evaluation covering navigation flow, accessibility standards, and user satisfaction metrics</div>
-                    <div style="font-size: 12px; color: #888; margin: 8px 0;">
-                        By 0x1357...bdf2 • ${new Date().toLocaleDateString()}
-                    </div>
-                    <div class="test-actions">
-                        <span style="color: #007bff; font-size: 12px;">Already voted (Demo)</span>
-                        <button class="action-btn finalize-btn" onclick="event.stopPropagation(); finalizeTest(4)">Finalize</button>
-                    </div>
-                </div>
-            `;
-        }
-
-        // Create test card HTML
-        function createTestCard(testId, category, testType, description, isFinalized, hasVoted, submitter, timestamp) {
-            const shortAddress = submitter.slice(0, 6) + '...' + submitter.slice(-4);
-            const date = new Date(timestamp * 1000).toLocaleDateString();
-
-            return `
-                <div class="test-card" onclick="interactWithTest(${testId})">
-                    <div class="test-header">
-                        <span class="test-id">Test #${testId}</span>
-                        <span class="test-status ${isFinalized ? 'status-finalized' : 'status-active'}">
-                            ${isFinalized ? 'Finalized' : 'Active'}
-                        </span>
-                    </div>
-                    <div class="test-title">${testType} - ${category}</div>
-                    <span class="test-category">${category}</span>
-                    <div class="test-description">${description}</div>
-                    <div style="font-size: 12px; color: #888; margin: 8px 0;">
-                        By ${shortAddress} • ${date}
-                    </div>
-                    <div class="test-actions">
-                        ${!isFinalized && !hasVoted ? `
-                            <button class="action-btn vote-pass-btn" onclick="event.stopPropagation(); voteOnTest(${testId}, true)">✓ Pass</button>
-                            <button class="action-btn vote-fail-btn" onclick="event.stopPropagation(); voteOnTest(${testId}, false)">✗ Fail</button>
-                        ` : ''}
-                        ${!isFinalized ? `
-                            <button class="action-btn finalize-btn" onclick="event.stopPropagation(); finalizeTest(${testId})">Finalize</button>
-                        ` : ''}
-                        ${hasVoted ? '<span style="color: #007bff; font-size: 12px;">Already voted</span>' : ''}
-                        ${isFinalized ? '<span style="color: #28a745; font-weight: bold;">✓ Completed</span>' : ''}
-                    </div>
-                </div>
-            `;
-        }
-
-        // Handle test card interaction
-        function interactWithTest(testId) {
-            updateStatus(`Interacting with Test #${testId} via MetaMask...`, 'processing');
-            console.log(`Test #${testId} clicked - ready for MetaMask interaction`);
-        }
-
-        // Update statistics display
-        async function updateStatistics() {
-            try {
-                const totalTests = await contract.getTotalTests();
-
-                // Only update elements that exist in the current UI
-                const totalTestsElement = document.getElementById('total-tests');
-                if (totalTestsElement) {
-                    totalTestsElement.textContent = totalTests.toString();
-                }
-
-                let pendingCount = 0;
-                let completedCount = 0;
-
-                for (let i = 0; i < totalTests; i++) {
-                    try {
-                        const [, , , , , isFinalized] = await contract.getTestDetails(i);
-                        if (isFinalized) {
-                            completedCount++;
-                        } else {
-                            pendingCount++;
-                        }
-                    } catch (error) {
-                        console.error(`Error checking test ${i}:`, error);
-                    }
-                }
-
-                // Only update elements that exist in the current UI
-                const pendingTestsElement = document.getElementById('pending-tests');
-                if (pendingTestsElement) {
-                    pendingTestsElement.textContent = pendingCount.toString();
-                }
-
-                const completedTestsElement = document.getElementById('completed-tests');
-                if (completedTestsElement) {
-                    completedTestsElement.textContent = completedCount.toString();
-                }
-
-            } catch (error) {
-                console.error('Failed to update statistics:', error);
-                // Only update elements that exist in the current UI
-                const totalTestsElement = document.getElementById('total-tests');
-                if (totalTestsElement) {
-                    totalTestsElement.textContent = '?';
-                }
-
-                const pendingTestsElement = document.getElementById('pending-tests');
-                if (pendingTestsElement) {
-                    pendingTestsElement.textContent = '?';
-                }
-
-                const completedTestsElement = document.getElementById('completed-tests');
-                if (completedTestsElement) {
-                    completedTestsElement.textContent = '?';
-                }
-            }
-        }
-
-        // Wallet Connection Flow
+        // Initialize application
         async function init() {
-            try {
-                // Step 1: Detection - Check window.ethereum (MetaMask provider)
-                if (typeof ethers === 'undefined') {
-                    updateStatus('Error: Ethers.js library not loaded. Please check your internet connection.', 'error');
-                    return;
-                }
-
-                if (typeof window.ethereum === 'undefined') {
-                    updateStatus('MetaMask not detected. Please install MetaMask browser extension.', 'error');
-                    return;
-                }
-
-                updateStatus('Connecting to MetaMask...', 'info');
+            if (typeof window.ethereum !== 'undefined') {
+                provider = new ethers.providers.Web3Provider(window.ethereum);
 
                 try {
-                    // Step 2: Request Access - Use eth_requestAccounts to get user permission
-                    const accounts = await window.ethereum.request({
-                        method: 'eth_requestAccounts'
-                    });
-
-                    if (!accounts || accounts.length === 0) {
-                        throw new Error('No accounts found. Please unlock MetaMask.');
-                    }
-
-                    // Step 3: Network Validation - Verify connection to Sepolia testnet (0xaa36a7)
-                    provider = new ethers.providers.Web3Provider(window.ethereum);
-                    const network = await provider.getNetwork();
-
-                    updateStatus(`Detected network: Chain ID ${network.chainId}`, 'info');
-
-                    // Step 4: Network Switching - Auto switch/add Sepolia if needed
-                    if (network.chainId !== 11155111) {
-                        updateStatus('Switching to Sepolia testnet...', 'info');
-                        await switchToSepolia();
-                        return; // switchToSepolia will call init() again
-                    }
-
-                    // Step 5: Provider Setup - Create ethers.js BrowserProvider and signer
+                    await window.ethereum.request({ method: 'eth_requestAccounts' });
                     signer = provider.getSigner();
-                    currentAccount = await signer.getAddress();
+                    userAddress = await signer.getAddress();
 
-                    // Step 6: Contract Initialization - Create game contract instance
+                    // Validate contract first
+                    const isValid = await validateContract();
+                    if (!isValid) {
+                        document.getElementById('contractStatus').textContent = 'Invalid Contract';
+                        return;
+                    }
+
+                    // Initialize contract
                     contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
 
-                    // Step 7: State Update - Update React state with account and contract
-                    // Success handling: Show success message "Connected to Sepolia! ✅"
-                    updateStatus(`Connected to Sepolia! ✅ Account: ${currentAccount.slice(0,6)}...${currentAccount.slice(-4)}`, 'success');
+                    updateConnectionStatus(true);
+                    await loadInspections();
+                    await checkAndDisplayAuthorizationStatus();
+                    await checkContractInfo();
 
-                    // Update UI to show interface instead of connection button
-                    await loadInitialState();
-                } catch (walletError) {
-                    console.error('Wallet connection error:', walletError);
-                    if (walletError.code === 4001) {
-                        updateStatus('Connection rejected by user. Please try again.', 'error');
-                    } else if (walletError.code === -32002) {
-                        updateStatus('MetaMask is already processing a request. Please wait.', 'error');
-                    } else {
-                        updateStatus(`Wallet connection failed: ${walletError.message}`, 'error');
-                    }
+                    document.getElementById('contractStatus').textContent = 'Connected';
+                    console.log('Connected to Privacy Quality Inspection Contract');
+
+                } catch (error) {
+                    console.error('Failed to connect wallet:', error);
+                    updateConnectionStatus(false);
+                    document.getElementById('contractStatus').textContent = 'Connection Failed';
                 }
-
-            } catch (error) {
-                console.error('Initialization error:', error);
-                updateStatus(`Application initialization failed: ${error.message}`, 'error');
-            }
-        }
-
-        // Debug function to check contract status
-        async function debugContractStatus() {
-            try {
-                console.log('=== Contract Debug Info ===');
-                console.log('Contract address:', CONTRACT_ADDRESS);
-                console.log('Current account:', currentAccount);
-
-                // First check if contract exists
-                try {
-                    const code = await provider.getCode(CONTRACT_ADDRESS);
-                    if (code === '0x') {
-                        updateStatus('Debug: Contract not found at this address. Please check the contract address.', 'error');
-                        console.log('❌ No contract code found at address');
-                        return;
-                    } else {
-                        console.log('✅ Contract code found, length:', code.length);
-                    }
-                } catch (codeError) {
-                    console.log('❌ Error checking contract code:', codeError.message);
-                    updateStatus('Debug: Cannot verify contract deployment.', 'error');
-                    return;
-                }
-
-                // Check basic contract function
-                let totalTests;
-                try {
-                    totalTests = await contract.getTotalTests();
-                    console.log('Total tests:', totalTests.toString());
-                } catch (testError) {
-                    console.log('❌ Error calling getTotalTests:', testError.message);
-                    updateStatus('Debug: Contract exists but function calls fail. Check ABI compatibility.', 'error');
-                    return;
-                }
-
-                if (totalTests == 0) {
-                    updateStatus('Debug: Contract working but no tests found. Submit a test first.', 'info');
-                    console.log('💡 Suggestion: Submit a quality test first before trying to vote');
-                    return;
-                }
-
-                console.log('=== Test Analysis ===');
-                for (let i = 0; i < Math.min(totalTests, 5); i++) {
-                    try {
-                        const testDetails = await contract.getTestDetails(i);
-                        const [category, testType, description, yesVotes, noVotes, isFinalized] = testDetails;
-
-                        console.log(`Test ${i}:`);
-                        console.log(`  Category: ${category}`);
-                        console.log(`  Type: ${testType}`);
-                        console.log(`  Finalized: ${isFinalized}`);
-                        console.log(`  Yes votes: ${yesVotes}`);
-                        console.log(`  No votes: ${noVotes}`);
-
-                        const hasVoted = await contract.hasUserVoted(i, currentAccount);
-                        console.log(`  User ${currentAccount} voted: ${hasVoted}`);
-
-                        const submitter = await contract.getTestSubmitter(i);
-                        console.log(`  Submitter: ${submitter}`);
-
-                        // Check if user can vote on this test
-                        if (isFinalized) {
-                            console.log(`  ❌ Cannot vote: Test is finalized`);
-                        } else if (hasVoted) {
-                            console.log(`  ❌ Cannot vote: User already voted`);
-                        } else {
-                            console.log(`  ✅ Can vote: Test is open for voting`);
-                        }
-                        console.log('---');
-                    } catch (testError) {
-                        console.log(`Error getting test ${i}:`, testError.message);
-                    }
-                }
-
-                updateStatus(`Debug: Found ${totalTests} tests. Check console for voting eligibility.`, 'info');
-            } catch (error) {
-                console.error('Debug error:', error);
-                updateStatus(`Debug failed: ${error.message}`, 'error');
-            }
-        }
-
-        // Create a sample test for testing purposes
-        async function createSampleTest() {
-            try {
-                updateStatus('Creating sample test...', 'info');
-
-                const tx = await contract.submitQualityTest(
-                    "Software",
-                    "Functionality Test",
-                    "Sample quality test for demonstrating the platform functionality. This is a test submission to show how the voting system works.",
-                    { gasLimit: 300000 }
-                );
-                await tx.wait();
-
-                updateStatus('Sample test created successfully!', 'success');
-
-                // Reload everything
-                await updateStatistics();
-                await loadPendingTests();
-                await loadQualityResults();
-
-            } catch (error) {
-                console.error('Create sample test error:', error);
-                updateStatus(`Failed to create sample test: ${error.message}`, 'error');
-            }
-        }
-
-        // Get Initial State - Load initial data after successful connection
-        async function loadInitialState() {
-            try {
-                updateStatus('Loading initial application state...', 'info');
-
-
-                // Load quality testing data and statistics
-                await updateStatistics();
-                await loadAvailableTests();
-                await loadQualityResults();
-                await loadPendingTests();
-
-                updateStatus(`Connected to Sepolia! ✅ Ready to use Quality Testing Platform`, 'success');
-
-            } catch (error) {
-                console.error('Failed to load initial state:', error);
-                updateStatus('Connected but failed to load data. Some features may not work.', 'error');
-            }
-        }
-
-        function updateStatus(message, type = 'info') {
-            const statusElement = document.getElementById('connection-status');
-            const statusText = document.getElementById('status-text');
-            const connectBtn = document.getElementById('connect-wallet-btn');
-            const retryBtn = document.getElementById('retry-btn');
-            const switchBtn = document.getElementById('switch-network-btn');
-            const mainContent = document.getElementById('main-content');
-            const debugSection = document.getElementById('debug-section');
-
-            statusText.textContent = message;
-            statusElement.className = `status-info ${type}`;
-
-            // Handle UI state based on connection status
-            if (type === 'error') {
-                // Show error state - show retry buttons, hide main content
-                connectBtn.style.display = 'none';
-                retryBtn.style.display = 'inline-block';
-                switchBtn.style.display = 'inline-block';
-                mainContent.style.display = 'none';
-                debugSection.style.display = 'none';
-            } else if (type === 'success') {
-                // Show success state - hide all buttons, show main content and debug
-                connectBtn.style.display = 'none';
-                retryBtn.style.display = 'none';
-                switchBtn.style.display = 'none';
-                mainContent.style.display = 'block';
-                debugSection.style.display = 'block';
-            } else if (type === 'processing') {
-                // Processing state - keep current UI state, just update the message
-                // Don't change any visibility settings
             } else {
-                // For 'info' type, only hide UI if we're not already connected
-                // Check if main content is already visible (user is connected)
-                const isConnected = mainContent.style.display === 'block';
-
-                if (!isConnected) {
-                    // Show connecting state only if not already connected
-                    retryBtn.style.display = 'none';
-                    switchBtn.style.display = 'none';
-                    mainContent.style.display = 'none';
-                    debugSection.style.display = 'none';
-                }
-                // If already connected, don't change the UI visibility
+                updateConnectionStatus(false);
+                showAlert('Please install MetaMask to use this application', 'error');
+                document.getElementById('contractStatus').textContent = 'MetaMask Required';
             }
         }
 
-        async function switchToSepolia() {
-            try {
-                await window.ethereum.request({
-                    method: 'wallet_switchEthereumChain',
-                    params: [{ chainId: '0xaa36a7' }], // Sepolia chainId (11155111)
-                });
-                updateStatus('Switched to Sepolia network. Retrying connection...', 'info');
-                setTimeout(init, 1000);
-            } catch (error) {
-                if (error.code === 4902) {
-                    // Network not added to MetaMask
-                    try {
-                        await window.ethereum.request({
-                            method: 'wallet_addEthereumChain',
-                            params: [NETWORK_CONFIG],
-                        });
-                        updateStatus('Sepolia network added. Retrying connection...', 'info');
-                        setTimeout(init, 1000);
-                    } catch (addError) {
-                        updateStatus(`Failed to add Sepolia network: ${addError.message}`, 'error');
-                    }
-                } else {
-                    updateStatus(`Failed to switch network: ${error.message}`, 'error');
-                }
+        // Update connection status
+        function updateConnectionStatus(connected) {
+            const statusElement = document.getElementById('connectionStatus');
+            const textElement = document.getElementById('connectionText');
+
+            if (connected && userAddress) {
+                statusElement.className = 'connection-status status-connected';
+                textElement.textContent = `Connected: ${userAddress.slice(0, 6)}...${userAddress.slice(-4)}`;
+            } else {
+                statusElement.className = 'connection-status status-disconnected';
+                textElement.textContent = 'Not connected - Please connect your wallet';
             }
         }
 
-        async function submitQualityTest() {
-            try {
-                // Type-safe parameter validation: string memory _category, _testType, _description
-                const category = document.getElementById('product-category').value.trim();
-                const testType = document.getElementById('test-type').value.trim();
-                const description = document.getElementById('test-description').value.trim();
+        // Show alert messages
+        function showAlert(message, type = 'success') {
+            const existingAlerts = document.querySelectorAll('.alert');
+            existingAlerts.forEach(alert => alert.remove());
 
-                if (!category || !testType || !description) {
-                    alert('Please fill in all fields');
-                    return;
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.textContent = message;
+
+            const container = document.querySelector('.container');
+            container.insertBefore(alert, container.children[3]);
+
+            setTimeout(() => {
+                if (alert.parentNode) {
+                    alert.remove();
                 }
-
-                updateStatus('Submitting quality test...', 'processing');
-
-                // Explicit string parameters matching contract ABI with manual gas limit
-                const tx = await contract.submitQualityTest(category, testType, description, {
-                    gasLimit: 300000 // Manual gas limit for test submission
-                });
-                const receipt = await tx.wait();
-
-                updateStatus('Quality test submitted successfully!', 'success');
-
-                // Clear form
-                document.getElementById('product-category').value = '';
-                document.getElementById('test-type').value = '';
-                document.getElementById('test-description').value = '';
-
-                // Reload results and update statistics
-                await updateStatistics();
-                await loadAvailableTests();
-                await loadQualityResults();
-                await loadPendingTests();
-
-            } catch (error) {
-                console.error('Submit error:', error);
-
-                // Enhanced error handling for submission
-                if (error.code === 'UNPREDICTABLE_GAS_LIMIT') {
-                    updateStatus('Submission failed: Gas estimation error. Please try again.', 'error');
-                } else if (error.message.includes('execution reverted')) {
-                    updateStatus('Submission failed: Transaction reverted. Please check your inputs.', 'error');
-                } else if (error.message.includes('user rejected')) {
-                    updateStatus('Submission cancelled by user', 'error');
-                } else if (error.message.includes('insufficient funds')) {
-                    updateStatus('Submission failed: Insufficient funds for gas', 'error');
-                } else {
-                    updateStatus(`Submission failed: ${error.message}`, 'error');
-                }
-            }
+            }, 5000);
         }
 
-        // Deploy preset test function with auto demo mode
-        async function deployPresetTest(category, testType, description) {
-            // If already in demo mode, simulate directly
-            if (autoDemoMode || isTestMode) {
-                return simulateDeployment(category, testType, description);
-            }
+        // Check if user is authorized inspector
+        async function checkInspectorAuthorization() {
+            if (!contract || !userAddress) return false;
 
             try {
-                console.log(`🚀 Starting deployment of preset test: ${testType} for ${category}`);
-                updateStatus(`Deploying preset test: ${testType} for ${category}...`, 'info');
-
-                // Check if contract is available
-                if (!contract) {
-                    throw new Error('Contract not initialized');
-                }
-
-                // Use the same logic as submitQualityTest but with preset values
-                const tx = await contract.submitQualityTest(category, testType, description, {
-                    gasLimit: 300000 // Manual gas limit for test submission
-                });
-
-                console.log('Transaction sent:', tx.hash);
-                const receipt = await tx.wait();
-                console.log('Transaction confirmed:', receipt);
-
-                // Check transaction status
-                if (receipt.status === 0) {
-                    throw new Error('Transaction failed');
-                }
-
-                updateStatus(`Preset test deployed successfully! Test ID: ${receipt.events?.[0]?.args?.testId || 'Unknown'}`, 'success');
-
-                // Reload results and update statistics
-                await updateStatistics();
-                await loadAvailableTests();
-                await loadQualityResults();
-                await loadPendingTests();
-
+                const isAuthorized = await contract.authorizedInspectors(userAddress);
+                return isAuthorized;
             } catch (error) {
-                console.log('Transaction failed, switching to demo mode');
-
-                // Auto switch to demo mode on any failure
-                autoDemoMode = true;
-
-                // Hide contract status panel
-                const statusPanel = document.getElementById('contract-status-panel');
-                if (statusPanel) {
-                    statusPanel.style.display = 'none';
-                }
-
-                // Update all preset buttons to demo mode
-                const presetButtons = document.querySelectorAll('.preset-item button');
-                presetButtons.forEach(button => {
-                    const originalOnclick = button.getAttribute('onclick');
-                    if (originalOnclick && !originalOnclick.includes('simulateDeployment')) {
-                        button.setAttribute('onclick', originalOnclick.replace('deployPresetTest', 'simulateDeployment'));
-                        button.style.background = '#9e9e9e';
-                        const newText = button.textContent.replace('Deploy', 'Demo').replace('部署', '演示');
-                        button.textContent = newText;
-                    }
-                });
-
-                // Simulate the deployment instead of showing error
-                updateStatus('Switched to demo mode - simulating contract operations', 'info');
-                return simulateDeployment(category, testType, description);
-            }
-        }
-
-        async function loadPendingTests() {
-            try {
-                // Check if the pending tests container exists
-                const pendingTestsContainer = document.getElementById('pending-tests');
-                if (!pendingTestsContainer) {
-                    console.log('Pending tests container not found - skipping loadPendingTests');
-                    return;
-                }
-
-                updateStatus('Loading pending tests...', 'info');
-
-                const totalTests = await contract.getTotalTests();
-                pendingTestsContainer.innerHTML = '';
-
-                if (totalTests == 0) {
-                    pendingTestsContainer.innerHTML = `
-                        <div style="text-align: center; padding: 30px; background: #f8f9fa; border-radius: 8px; margin: 20px 0;">
-                            <h3>No Tests Found</h3>
-                            <p>No quality tests have been submitted yet.</p>
-                            <p>Submit the first test using the form above!</p>
-                            <button onclick="createSampleTest()" style="background: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 5px; margin: 10px; cursor: pointer;">
-                                🚀 Create Sample Test
-                            </button>
-                        </div>
-                    `;
-                    updateStatus('No tests found. Submit your first quality test!', 'info');
-                    return;
-                }
-
-                let pendingCount = 0;
-
-                for (let i = 0; i < totalTests; i++) {
-                    try {
-                        const [category, testType, description, yesVotes, noVotes, isFinalized] = await contract.getTestDetails(i);
-
-                        if (!isFinalized) {
-                            pendingCount++;
-                            const testElement = createPendingTestElement(i, category, testType, description);
-                            pendingTestsContainer.appendChild(testElement);
-                        }
-                    } catch (error) {
-                        console.error(`Error loading test ${i}:`, error);
-                    }
-                }
-
-                if (pendingCount === 0) {
-                    pendingTestsContainer.innerHTML = '<p>No pending tests available for review. All tests have been finalized.</p>';
-                }
-
-                updateStatus(`Loaded ${pendingCount} pending tests`, 'success');
-
-            } catch (error) {
-                console.error('Load pending tests error:', error);
-                updateStatus(`Failed to load pending tests: ${error.message}`, 'error');
-            }
-        }
-
-        function createPendingTestElement(testId, category, testType, description) {
-            const div = document.createElement('div');
-            div.className = 'quality-item';
-            div.innerHTML = `
-                <div class="quality-header">
-                    <div class="quality-title">Test #${testId}</div>
-                    <div class="quality-status status-pending">Pending Review</div>
-                </div>
-                <p><strong>Category:</strong> ${category}</p>
-                <p><strong>Type:</strong> ${testType}</p>
-                <p><strong>Description:</strong> ${description}</p>
-                <div class="vote-buttons">
-                    <button class="vote-btn vote-pass" onclick="console.log('Pass button clicked for test ${testId}'); voteOnTest(${testId}, true)">✓ Pass</button>
-                    <button class="vote-btn vote-fail" onclick="console.log('Fail button clicked for test ${testId}'); voteOnTest(${testId}, false)">✗ Fail</button>
-                </div>
-                <div class="finalize-buttons" style="margin-top: 10px; border-top: 1px solid #eee; padding-top: 10px;">
-                    <button class="vote-btn" onclick="finalizeTest(${testId})" style="background: #007bff;">🏁 Finalize Test</button>
-                    <button class="vote-btn" onclick="forceFinalize(${testId})" style="background: #dc3545;">⚡ Force Finalize</button>
-                    <button class="vote-btn" onclick="viewEncryptedVotes(${testId})" style="background: #6f42c1;">🔒 View Votes</button>
-                </div>
-            `;
-            return div;
-        }
-
-        async function voteOnTest(testId, passed) {
-            // If in demo mode, simulate vote immediately
-            if (autoDemoMode || isTestMode) {
-                return simulateVote(testId, passed);
-            }
-
-            try {
-                updateStatus(`Preparing to vote on test #${testId}...`, 'processing');
-                console.log(`Attempting to vote on test ${testId} with passed=${passed}`);
-
-                // Validate inputs
-                if (testId < 0) {
-                    throw new Error('Invalid test ID');
-                }
-
-                // First check if contract exists
-                const contractCode = await provider.getCode(CONTRACT_ADDRESS);
-                console.log('Contract code length:', contractCode.length);
-                if (contractCode === '0x') {
-                    console.log('No contract found - switching to demo mode');
-                    autoDemoMode = true;
-                    return simulateVote(testId, passed);
-                }
-
-                // For demo tests (testId 0-4), we should try to trigger MetaMask even if contract has no tests
-                // For real tests (testId >= 100), convert back to contract testId
-                if (testId <= 4) {
-                    // Type-safe parameter: uint256 _testId, uint8 _vote
-                    const voteValue = passed ? 1 : 0;
-
-                    updateStatus(`Opening MetaMask for test #${testId} vote...`, 'processing');
-
-                    try {
-                        // Try to submit the vote transaction - this should trigger MetaMask popup
-                        const tx = await contract.voteOnTest(testId, voteValue, {
-                            gasLimit: 500000 // Manual gas limit for FHE operations
-                        });
-
-                        updateStatus('MetaMask transaction confirmed! Processing...', 'processing');
-                        const receipt = await tx.wait();
-
-                        if (receipt.status === 1) {
-                            updateStatus('Vote submitted successfully! (Encrypted with FHE)', 'success');
-                        } else {
-                            throw new Error('Transaction failed');
-                        }
-
-                        // Reload data
-                        await updateStatistics();
-                        await loadPendingTests();
-                        await loadQualityResults();
-
-                    } catch (txError) {
-                        console.log('Transaction error:', txError);
-
-                        // Check if user rejected the transaction
-                        if (txError.code === 4001 || txError.message.includes('user rejected')) {
-                            updateStatus('Transaction cancelled by user', 'error');
-                            return;
-                        }
-
-                        // Check if it's a contract revert
-                        if (txError.message.includes('execution reverted') || txError.reason) {
-                            updateStatus(`Contract error: ${txError.reason || 'Transaction reverted'}`, 'error');
-                            console.log('Contract rejected the transaction - this might be expected for demo tests');
-
-                            // Still show it as a successful demo interaction since MetaMask popup appeared
-                            updateStatus('MetaMask interaction successful (demo mode)', 'success');
-                            return simulateVote(testId, passed);
-                        }
-
-                        // For other errors, fall back to demo mode
-                        console.log('Vote transaction failed, switching to demo mode');
-                        autoDemoMode = true;
-                        return simulateVote(testId, passed);
-                    }
-                } else if (testId >= 100) {
-                    // For real contract tests (testId >= 100), convert back to contract testId
-                    const contractTestId = testId - 100;
-                    console.log(`Converting UI testId ${testId} to contract testId ${contractTestId}`);
-
-                    const totalTests = await contract.getTotalTests();
-                    console.log(`Total tests: ${totalTests}`);
-
-                    if (totalTests == 0) {
-                        console.log('No real tests available - switching to demo mode');
-                        autoDemoMode = true;
-                        return simulateVote(testId, passed);
-                    }
-
-                    if (contractTestId >= totalTests) {
-                        throw new Error(`Test #${testId} does not exist. Only ${totalTests} real tests available.`);
-                    }
-
-                    const hasVoted = await contract.hasUserVoted(contractTestId, currentAccount);
-                    if (hasVoted) {
-                        throw new Error('You have already voted on this test');
-                    }
-
-                    const [category, testType, description, yesVotes, noVotes, isFinalized] = await contract.getTestDetails(contractTestId);
-                    if (isFinalized) {
-                        throw new Error('This test has already been finalized');
-                    }
-
-                    // Proceed with real vote using contract testId
-                    const voteValue = passed ? 1 : 0;
-                    updateStatus(`Opening MetaMask for test #${testId} vote...`, 'processing');
-
-                    const tx = await contract.voteOnTest(contractTestId, voteValue, {
-                        gasLimit: 500000
-                    });
-                    const receipt = await tx.wait();
-
-                    updateStatus('Vote submitted successfully! (Encrypted with FHE)', 'success');
-
-                    await updateStatistics();
-                    await loadPendingTests();
-                    await loadQualityResults();
-                } else {
-                    // For other testIds (5-99), treat as demo
-                    console.log(`TestId ${testId} not in expected range - treating as demo`);
-                    autoDemoMode = true;
-                    return simulateVote(testId, passed);
-                }
-
-            } catch (error) {
-                console.log('Vote function error:', error);
-
-                // Auto switch to demo mode on any failure
-                autoDemoMode = true;
-                updateStatus('Switched to demo mode due to contract error', 'info');
-                return simulateVote(testId, passed);
-            }
-        }
-
-        // Simulate vote function for demo mode
-        function simulateVote(testId, passed) {
-            console.log('🧪 Simulating vote:', testId, passed ? 'pass' : 'fail');
-            updateStatus(`Demo vote submitted for test #${testId}: ${passed ? 'Pass' : 'Fail'}`, 'success');
-        }
-
-        async function finalizeTest(testId) {
-            try {
-                updateStatus(`Finalizing test #${testId}...`, 'processing');
-
-                // Convert UI testId to contract testId if needed
-                const contractTestId = testId >= 100 ? testId - 100 : testId;
-
-                const tx = await contract.finalizeTest(contractTestId, {
-                    gasLimit: 400000 // Manual gas limit for finalization
-                });
-                await tx.wait();
-
-                updateStatus('Test finalized successfully!', 'success');
-
-                // Reload pending tests and results
-                await updateStatistics();
-                await loadPendingTests();
-                await loadQualityResults();
-
-            } catch (error) {
-                console.error('Finalize error:', error);
-                updateStatus(`Finalize failed: ${error.message}`, 'error');
-            }
-        }
-
-        async function forceFinalize(testId) {
-            try {
-                updateStatus(`Force finalizing test #${testId}...`, 'processing');
-
-                // Convert UI testId to contract testId if needed
-                const contractTestId = testId >= 100 ? testId - 100 : testId;
-
-                const tx = await contract.forceFinalize(contractTestId, {
-                    gasLimit: 400000 // Manual gas limit for force finalization
-                });
-                await tx.wait();
-
-                updateStatus('Test force finalized successfully!', 'success');
-
-                // Reload pending tests and results
-                await updateStatistics();
-                await loadPendingTests();
-                await loadQualityResults();
-
-            } catch (error) {
-                console.error('Force finalize error:', error);
-                updateStatus(`Force finalize failed: ${error.message}`, 'error');
-            }
-        }
-
-        async function viewEncryptedVotes(testId) {
-            try {
-                updateStatus(`Accessing encrypted votes for test #${testId}...`, 'processing');
-
-                // Convert UI testId to contract testId if needed
-                const contractTestId = testId >= 100 ? testId - 100 : testId;
-
-                // This function modifies state (grants access), so it's a transaction
-                const tx = await contract.getEncryptedVotes(contractTestId, {
-                    gasLimit: 200000 // Manual gas limit for accessing encrypted votes
-                });
-                await tx.wait();
-
-                updateStatus('Encrypted vote access granted! Check transaction details.', 'success');
-
-            } catch (error) {
-                console.error('View encrypted votes error:', error);
-                updateStatus(`View encrypted votes failed: ${error.message}`, 'error');
-            }
-        }
-
-        async function loadQualityResults() {
-            try {
-                const totalTests = await contract.getTotalTests();
-                const resultsContainer = document.getElementById('quality-results');
-                resultsContainer.innerHTML = '';
-
-                let passedCount = 0;
-                let failedCount = 0;
-                let pendingCount = 0;
-
-                for (let i = 0; i < totalTests; i++) {
-                    try {
-                        const [category, testType, description, yesVotes, noVotes, isFinalized] = await contract.getTestDetails(i);
-
-                        let status, statusClass;
-                        if (isFinalized) {
-                            const [hasPassed, isRevealed] = await contract.getTestResult(i);
-                            if (isRevealed) {
-                                status = 'Finalized (Result Encrypted)';
-                                statusClass = 'status-passed';
-                                passedCount++; // Count as completed
-                            } else {
-                                status = 'Finalized';
-                                statusClass = 'status-passed';
-                                passedCount++;
-                            }
-                        } else {
-                            status = 'Pending';
-                            statusClass = 'status-pending';
-                            pendingCount++;
-                        }
-
-                        // Get additional info
-                        const submitter = await contract.getTestSubmitter(i);
-                        const timestamp = await contract.getTestTimestamp(i);
-                        const hasVoted = await contract.hasUserVoted(i, currentAccount);
-
-                        const testElement = document.createElement('div');
-                        testElement.className = 'quality-item';
-                        testElement.innerHTML = `
-                            <div class="quality-header">
-                                <div class="quality-title">Test #${i}</div>
-                                <div class="quality-status ${statusClass}">${status}</div>
-                            </div>
-                            <p><strong>Category:</strong> ${category}</p>
-                            <p><strong>Type:</strong> ${testType}</p>
-                            <p><strong>Description:</strong> ${description}</p>
-                            <p><strong>Submitter:</strong> ${submitter.slice(0,6)}...${submitter.slice(-4)}</p>
-                            <p><strong>Submitted:</strong> ${new Date(timestamp * 1000).toLocaleString()}</p>
-                            <p><strong>Your Vote:</strong> ${hasVoted ? 'Voted ✓' : 'Not voted'}</p>
-                            <p><strong>Vote Counts:</strong> Encrypted for privacy 🔒</p>
-                        `;
-                        resultsContainer.appendChild(testElement);
-                    } catch (error) {
-                        console.error(`Error loading test result ${i}:`, error);
-                    }
-                }
-
-                // Update statistics
-                document.getElementById('total-tests').textContent = totalTests.toString();
-                document.getElementById('passed-tests').textContent = passedCount.toString();
-                document.getElementById('failed-tests').textContent = failedCount.toString();
-                document.getElementById('pending-tests-count').textContent = pendingCount.toString();
-
-            } catch (error) {
-                console.error('Load results error:', error);
-                updateStatus(`Failed to load results: ${error.message}`, 'error');
-            }
-        }
-
-        // Initialize when page loads
-        // Check internet connectivity
-        function checkConnectivity() {
-            if (!navigator.onLine) {
-                updateStatus('No internet connection detected. Please check your connection.', 'error');
+                console.error('Error checking authorization:', error);
                 return false;
             }
-            return true;
         }
 
-        // Handle online/offline events
-        window.addEventListener('online', () => {
-            updateStatus('Internet connection restored. Retrying...', 'info');
-            setTimeout(init, 1000);
-        });
+        // Check contract info (force refresh, no cache)
+        async function checkContractInfo() {
+            if (!contract || !userAddress) return;
 
-        window.addEventListener('offline', () => {
-            updateStatus('Internet connection lost. Please check your connection.', 'error');
-        });
+            try {
+                console.log('🔄 Refreshing contract info from blockchain...');
 
-        // Initialize on page load - but don't auto-connect
-        window.addEventListener('load', () => {
-            if (!checkConnectivity()) {
-                updateStatus('No internet connection detected. Please check your connection.', 'error');
-            } else {
-                updateStatus('Click below to connect your MetaMask wallet to Sepolia testnet', 'info');
+                // Force fresh call to get latest owner (no cache)
+                const owner = await contract.owner({ blockTag: 'latest' });
+                const isOwner = owner.toLowerCase() === userAddress.toLowerCase();
+
+                // Get contract status
+                const isPaused = await contract.contractPaused({ blockTag: 'latest' });
+
+                console.log('📋 Latest Contract Info:', {
+                    contractAddress: CONTRACT_ADDRESS,
+                    owner: owner,
+                    currentUser: userAddress,
+                    isOwner: isOwner,
+                    isPaused: isPaused
+                });
+
+                // Update contract info
+                const contractInfoElement = document.querySelector('.contract-info');
+                if (contractInfoElement) {
+                    // Reset to original content
+                    contractInfoElement.innerHTML = `
+                        <strong>Contract Address:</strong> ${CONTRACT_ADDRESS}<br>
+                        <strong>Network:</strong> Sepolia Testnet
+                    `;
+
+                    // Add fresh owner info
+                    if (isOwner) {
+                        contractInfoElement.innerHTML += `<br><strong style="color: #48bb78;">✅ You are the contract owner</strong>`;
+                        showAlert('✅ Confirmed: You are the contract owner and can authorize inspectors!', 'success');
+                    } else {
+                        contractInfoElement.innerHTML += `<br><strong>Owner:</strong> ${owner}`;
+                        contractInfoElement.innerHTML += `<br><strong style="color: #ed8936;">⚠️ You are NOT the owner</strong>`;
+                    }
+                }
+
+                // Update authorization alert
+                const ownerAddressElement = document.getElementById('contractOwnerAddress');
+                const authAlert = document.getElementById('authorizationAlert');
+
+                if (ownerAddressElement) {
+                    ownerAddressElement.textContent = owner;
+                }
+
+                if (authAlert && isOwner) {
+                    authAlert.style.backgroundColor = '#c6f6d5';
+                    authAlert.style.borderColor = '#9ae6b4';
+                    authAlert.style.color = '#22543d';
+                    authAlert.innerHTML = `
+                        <strong>✅ You are the contract owner!</strong>
+                        <br>You can authorize inspectors and manage the system.
+                    `;
+                }
+
+                if (isPaused) {
+                    showAlert('⚠️ Contract is currently paused. Some functions may not work.', 'error');
+                }
+
+                return { owner, isOwner, isPaused };
+
+            } catch (error) {
+                console.error('❌ Error checking contract info:', error);
+                showAlert('⚠️ Unable to verify contract information. Please check your network connection.', 'error');
+                return null;
+            }
+        }
+
+        // Check and display authorization status
+        async function checkAndDisplayAuthorizationStatus() {
+            if (!contract || !userAddress) return;
+
+            try {
+                const isAuthorized = await checkInspectorAuthorization();
+                const statusElement = document.getElementById('connectionText');
+                const userAddressElement = document.getElementById('currentUserAddress');
+
+                if (userAddressElement) {
+                    userAddressElement.textContent = userAddress;
+                }
+
+                if (isAuthorized) {
+                    statusElement.innerHTML = `Connected: ${userAddress.slice(0, 6)}...${userAddress.slice(-4)} ✅ <span style="color: #48bb78;">Authorized Inspector</span>`;
+                } else {
+                    statusElement.innerHTML = `Connected: ${userAddress.slice(0, 6)}...${userAddress.slice(-4)} ⚠️ <span style="color: #ed8936;">Not Authorized</span>`;
+                    showAlert('⚠️ You are not authorized as an inspector. Please get authorized by the contract owner to record inspections.', 'error');
+                }
+            } catch (error) {
+                console.error('Error checking authorization status:', error);
+            }
+        }
+
+        // Record quality inspection
+        async function recordInspection(event) {
+            event.preventDefault();
+
+            if (!contract) {
+                showAlert('Please connect your wallet first', 'error');
+                return;
+            }
+
+            const recordBtn = document.getElementById('recordBtn');
+            const recordBtnText = document.getElementById('recordBtnText');
+
+            try {
+                recordBtn.disabled = true;
+                recordBtnText.innerHTML = '<span class="loading"></span> Checking Authorization...';
+
+                // Check if user is authorized inspector
+                const isAuthorized = await checkInspectorAuthorization();
+                if (!isAuthorized) {
+                    throw new Error('You are not authorized as an inspector. Please get authorized by the contract owner first.');
+                }
+
+                recordBtnText.innerHTML = '<span class="loading"></span> Recording Inspection...';
+
+                const qualityScore = parseInt(document.getElementById('qualityScore').value);
+                const defectCount = parseInt(document.getElementById('defectCount').value);
+                const productBatch = parseInt(document.getElementById('productBatch').value);
+                const productCategory = document.getElementById('productCategory').value;
+
+                if (qualityScore < 0 || qualityScore > 100) {
+                    throw new Error('Quality score must be between 0 and 100');
+                }
+
+                if (defectCount < 0 || defectCount > 255) {
+                    throw new Error('Defect count must be between 0 and 255');
+                }
+
+                console.log('Recording inspection:', {
+                    qualityScore,
+                    defectCount,
+                    productBatch,
+                    productCategory
+                });
+
+                const tx = await contract.recordInspection(
+                    qualityScore,
+                    defectCount,
+                    productBatch,
+                    productCategory,
+                    { gasLimit: 500000 }
+                );
+
+                showAlert('Transaction submitted! Waiting for confirmation...', 'success');
+                await tx.wait();
+
+                showAlert('Inspection recorded successfully! Data is encrypted on-chain. 🎉', 'success');
+                document.getElementById('inspectionForm').reset();
+                await loadInspections();
+
+            } catch (error) {
+                console.error('Error recording inspection:', error);
+                if (error.message.includes('not authorized')) {
+                    showAlert(`❌ ${error.message}`, 'error');
+                } else if (error.code === 'CALL_EXCEPTION') {
+                    showAlert('❌ Transaction failed. You may not be authorized as an inspector or the contract is paused.', 'error');
+                } else {
+                    showAlert(`Error: ${error.message}`, 'error');
+                }
+            } finally {
+                recordBtn.disabled = false;
+                recordBtnText.textContent = 'Record Inspection';
+            }
+        }
+
+        // Authorize inspector
+        async function authorizeInspector() {
+            if (!contract) {
+                showAlert('Please connect your wallet first', 'error');
+                return;
+            }
+
+            const inspectorAddress = document.getElementById('newInspector').value;
+
+            if (!inspectorAddress || !ethers.utils.isAddress(inspectorAddress)) {
+                showAlert('Please enter a valid Ethereum address', 'error');
+                return;
+            }
+
+            try {
+                // Force fresh check of owner (no cache)
+                const owner = await contract.owner({ blockTag: 'latest' });
+                const isOwner = owner.toLowerCase() === userAddress.toLowerCase();
+
+                console.log('🔍 Owner verification:', {
+                    contractOwner: owner,
+                    currentUser: userAddress,
+                    isOwner: isOwner
+                });
+
+                if (!isOwner) {
+                    showAlert(`❌ Only the contract owner (${owner}) can authorize inspectors. Current owner is NOT you.`, 'error');
+                    return;
+                }
+
+                // Check if contract is paused
+                const isPaused = await contract.contractPaused();
+                if (isPaused) {
+                    showAlert('❌ Contract is paused. Cannot authorize inspectors.', 'error');
+                    return;
+                }
+
+                const tx = await contract.authorizeInspector(inspectorAddress, { gasLimit: 200000 });
+                showAlert('Transaction submitted! Authorizing inspector...', 'success');
+                await tx.wait();
+
+                showAlert(`✅ Inspector ${inspectorAddress} authorized successfully!`, 'success');
+                document.getElementById('newInspector').value = '';
+
+                // Refresh authorization status if the user authorized themselves
+                if (inspectorAddress.toLowerCase() === userAddress.toLowerCase()) {
+                    await checkAndDisplayAuthorizationStatus();
+                }
+
+            } catch (error) {
+                console.error('Error authorizing inspector:', error);
+                if (error.code === 'CALL_EXCEPTION') {
+                    showAlert('❌ Transaction failed. You may not be the contract owner or the contract might be paused.', 'error');
+                } else {
+                    showAlert(`Error: ${error.message}`, 'error');
+                }
+            }
+        }
+
+        // Verify inspection
+        async function verifyInspection() {
+            if (!contract) {
+                showAlert('Please connect your wallet first', 'error');
+                return;
+            }
+
+            const inspectionId = parseInt(document.getElementById('inspectionId').value);
+
+            if (isNaN(inspectionId) || inspectionId < 0) {
+                showAlert('Please enter a valid inspection ID', 'error');
+                return;
+            }
+
+            try {
+                const tx = await contract.verifyInspection(inspectionId, { gasLimit: 200000 });
+                showAlert('Transaction submitted! Verifying inspection...', 'success');
+                await tx.wait();
+
+                showAlert(`Inspection #${inspectionId} verified successfully!`, 'success');
+                document.getElementById('inspectionId').value = '';
+                await loadInspections();
+
+            } catch (error) {
+                console.error('Error verifying inspection:', error);
+                showAlert(`Error: ${error.message}`, 'error');
+            }
+        }
+
+        // Load inspections
+        async function loadInspections() {
+            if (!contract) {
+                document.getElementById('inspectionsList').innerHTML = '<p style="text-align: center; color: #718096;">Connect wallet to view inspections</p>';
+                return;
+            }
+
+            try {
+                const inspectionCount = await contract.inspectionCount();
+                const inspectionsList = document.getElementById('inspectionsList');
+
+                if (inspectionCount.toNumber() === 0) {
+                    inspectionsList.innerHTML = '<p style="text-align: center; color: #718096;">No inspections recorded yet</p>';
+                    return;
+                }
+
+                let inspectionsHTML = '';
+                const startIndex = Math.max(0, inspectionCount.toNumber() - 10);
+
+                for (let i = inspectionCount.toNumber() - 1; i >= startIndex; i--) {
+                    try {
+                        const inspection = await contract.getInspectionInfo(i);
+                        const date = new Date(inspection.timestamp * 1000).toLocaleString();
+                        const verifiedClass = inspection.isVerified ? 'inspection-verified' : 'inspection-pending';
+                        const verifiedText = inspection.isVerified ? '✅ Verified' : '⏳ Pending';
+
+                        inspectionsHTML += `
+                            <div class="inspection-item ${verifiedClass}">
+                                <div>
+                                    <strong>ID #${i}</strong><br>
+                                    <small>Category: ${inspection.productCategory}</small>
+                                </div>
+                                <div>
+                                    Inspector:<br>
+                                    <small>${inspection.inspector.slice(0, 6)}...${inspection.inspector.slice(-4)}</small>
+                                </div>
+                                <div>
+                                    ${date}
+                                </div>
+                                <div>
+                                    ${verifiedText}
+                                </div>
+                                <div>
+                                    <button class="btn" style="padding: 0.5rem; font-size: 0.8rem;" onclick="viewInspectionDetails(${i})">
+                                        View Details
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                    } catch (error) {
+                        console.error(`Error loading inspection ${i}:`, error);
+                    }
+                }
+
+                inspectionsList.innerHTML = inspectionsHTML || '<p style="text-align: center; color: #718096;">No inspections found</p>';
+
+            } catch (error) {
+                console.error('Error loading inspections:', error);
+                showAlert(`Error loading inspections: ${error.message}`, 'error');
+            }
+        }
+
+        // View inspection details
+        async function viewInspectionDetails(inspectionId) {
+            if (!contract) return;
+
+            try {
+                const inspection = await contract.getInspectionInfo(inspectionId);
+                const details = `Inspection Details - ID #${inspectionId}
+
+Inspector: ${inspection.inspector}
+Product Category: ${inspection.productCategory}
+Recorded: ${new Date(inspection.timestamp * 1000).toLocaleString()}
+Verified: ${inspection.isVerified ? 'Yes' : 'No'}
+Data Hash: ${inspection.inspectionHash}
+
+Privacy Notice:
+Quality scores, defect counts, and batch numbers are encrypted using Fully Homomorphic Encryption (FHE) and are only accessible to authorized personnel while maintaining complete data privacy.`;
+
+                alert(details);
+
+            } catch (error) {
+                console.error('Error viewing inspection details:', error);
+                showAlert(`Error: ${error.message}`, 'error');
+            }
+        }
+
+        // Calculate metrics
+        async function calculateMetrics() {
+            if (!contract) {
+                showAlert('Please connect your wallet first', 'error');
+                return;
+            }
+
+            const category = document.getElementById('categorySelect').value;
+
+            if (!category) {
+                showAlert('Please select a category', 'error');
+                return;
+            }
+
+            try {
+                const tx = await contract.calculateCategoryMetrics(category, { gasLimit: 800000 });
+                showAlert('Calculating encrypted metrics... Please wait for confirmation.', 'success');
+                await tx.wait();
+
+                showAlert(`Privacy-preserving metrics calculated for ${category}!`, 'success');
+
+                const metricsDisplay = document.getElementById('metricsDisplay');
+                metricsDisplay.innerHTML = `
+                    <div class="metric-card">
+                        <div class="metric-value">🔒</div>
+                        <div class="metric-label">Total Inspections<br><small>(FHE Encrypted)</small></div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">🔒</div>
+                        <div class="metric-label">Passed Quality<br><small>(FHE Encrypted)</small></div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">🔒</div>
+                        <div class="metric-label">Average Score<br><small>(FHE Encrypted)</small></div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">✅</div>
+                        <div class="metric-label">Privacy Protected<br><small>Fully Encrypted</small></div>
+                    </div>
+                `;
+
+            } catch (error) {
+                console.error('Error calculating metrics:', error);
+                showAlert(`Error: ${error.message}`, 'error');
+            }
+        }
+
+        // Event listeners
+        function setupEventListeners() {
+            if (!contract) return;
+
+            contract.on('InspectionRecorded', (inspectionId, inspector, category, timestamp) => {
+                console.log('New inspection recorded:', { inspectionId: inspectionId.toString(), inspector, category });
+                showAlert(`New encrypted inspection recorded: ID #${inspectionId}`, 'success');
+                loadInspections();
+            });
+
+            contract.on('InspectionVerified', (inspectionId, verifier) => {
+                console.log('Inspection verified:', { inspectionId: inspectionId.toString(), verifier });
+                showAlert(`Inspection #${inspectionId} verified by ${verifier.slice(0, 6)}...${verifier.slice(-4)}!`, 'success');
+                loadInspections();
+            });
+
+            contract.on('QualityAlert', (category, inspectionId) => {
+                console.log('Quality alert:', { category, inspectionId: inspectionId.toString() });
+                showAlert(`⚠️ Quality Alert: Low quality detected in ${category} (ID: #${inspectionId})`, 'error');
+            });
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', async () => {
+            await init();
+            setupEventListeners();
+
+            document.getElementById('inspectionForm').addEventListener('submit', recordInspection);
+
+            // Network validation
+            if (window.ethereum) {
+                const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+                if (chainId !== '0xaa36a7') { // Sepolia testnet
+                    showAlert('Please switch to Sepolia testnet (Chain ID: 11155111)', 'error');
+                }
             }
         });
 
-        // Handle account changes
+        // Handle account/network changes
         if (window.ethereum) {
-            window.ethereum.on('accountsChanged', function (accounts) {
-                if (accounts.length === 0) {
-                    updateStatus('Please connect to MetaMask', 'error');
+            window.ethereum.on('accountsChanged', async (accounts) => {
+                if (accounts.length > 0) {
+                    await init();
                 } else {
-                    init();
+                    updateConnectionStatus(false);
                 }
             });
 
-            window.ethereum.on('chainChanged', function (chainId) {
+            window.ethereum.on('chainChanged', () => {
                 window.location.reload();
             });
         }
+
+        // Utility functions
+        function formatAddress(address) {
+            return `${address.slice(0, 6)}...${address.slice(-4)}`;
+        }
+
+        // Refresh contract info manually
+        async function refreshContractInfo() {
+            if (!contract) {
+                showAlert('Please connect your wallet first', 'error');
+                return;
+            }
+
+            showAlert('🔄 Refreshing contract information...', 'success');
+            await checkContractInfo();
+            await checkAndDisplayAuthorizationStatus();
+            showAlert('✅ Contract information refreshed!', 'success');
+        }
+
+        // Test contract functions with detailed diagnostics
+        async function testContract() {
+            if (!contract) {
+                console.log('❌ Contract not initialized');
+                return;
+            }
+
+            try {
+                console.log('🔍 === Detailed Contract Diagnostics ===');
+                console.log('📍 Contract Address:', CONTRACT_ADDRESS);
+                console.log('👤 User Address:', userAddress);
+                console.log('🌐 Network:', await provider.getNetwork());
+
+                // Test if contract exists
+                const code = await provider.getCode(CONTRACT_ADDRESS);
+                console.log('📜 Contract Code Length:', code.length);
+
+                if (code === '0x') {
+                    console.error('❌ Contract not deployed at this address!');
+                    showAlert('❌ Contract not found at this address. Please verify the contract address.', 'error');
+                    return;
+                }
+
+                // Test basic contract calls
+                console.log('\n🔬 Testing Contract Functions:');
+
+                try {
+                    const owner = await contract.owner();
+                    console.log('✅ Owner:', owner);
+                    console.log('👑 Is User Owner:', owner.toLowerCase() === userAddress.toLowerCase());
+                } catch (error) {
+                    console.error('❌ Failed to get owner:', error.message);
+                }
+
+                try {
+                    const isPaused = await contract.contractPaused();
+                    console.log('⏸️ Contract Paused:', isPaused);
+                } catch (error) {
+                    console.error('❌ Failed to check pause status:', error.message);
+                }
+
+                try {
+                    const isAuthorized = await contract.authorizedInspectors(userAddress);
+                    console.log('✅ User Authorized:', isAuthorized);
+                } catch (error) {
+                    console.error('❌ Failed to check authorization:', error.message);
+                }
+
+                try {
+                    const inspectionCount = await contract.inspectionCount();
+                    console.log('📊 Total Inspections:', inspectionCount.toString());
+                } catch (error) {
+                    console.error('❌ Failed to get inspection count:', error.message);
+                }
+
+                console.log('🏁 === Diagnostics Complete ===');
+
+            } catch (error) {
+                console.error('💥 Contract test failed:', error);
+                showAlert(`Contract test failed: ${error.message}`, 'error');
+            }
+        }
+
+        // Check if contract is valid
+        async function validateContract() {
+            if (!provider) {
+                showAlert('❌ Please connect your wallet first', 'error');
+                return false;
+            }
+
+            try {
+                const code = await provider.getCode(CONTRACT_ADDRESS);
+                if (code === '0x') {
+                    showAlert('❌ No contract found at this address. Please verify the contract address.', 'error');
+                    return false;
+                }
+
+                // Try to call a basic function
+                const testContract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, provider);
+                await testContract.owner();
+
+                return true;
+            } catch (error) {
+                console.error('Contract validation failed:', error);
+                showAlert(`❌ Contract validation failed: ${error.message}`, 'error');
+                return false;
+            }
+        }
+
+        // Global debug access
+        window.privacyQualityApp = {
+            CONTRACT_ADDRESS,
+            contract,
+            provider,
+            signer,
+            userAddress,
+            loadInspections,
+            recordInspection,
+            authorizeInspector,
+            verifyInspection,
+            calculateMetrics,
+            testContract,
+            validateContract,
+            refreshContractInfo
+        };
     </script>
 </body>
 </html>
